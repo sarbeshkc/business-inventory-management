@@ -13,41 +13,46 @@ class SalesModel : public QAbstractListModel
     Q_PROPERTY(double totalRevenue READ totalRevenue NOTIFY totalRevenueChanged)
 
 public:
-    enum SalesRoles {
+    enum SaleRoles {
         IdRole = Qt::UserRole + 1,
         ItemIdRole,
         ItemNameRole,
         QuantityRole,
+        PriceRole,
         TotalPriceRole,
-        SaleDateRole
+        SaleDateRole,
+        CategoryRole,
+        SupplierNameRole,
+        SupplierAddressRole
     };
 
     explicit SalesModel(DatabaseManager *dbManager, QObject *parent = nullptr);
-    ~SalesModel();
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
 
-    Q_INVOKABLE bool addSale(int itemId, int quantity, double totalPrice);
+    Q_INVOKABLE void setUserId(int userId);
+    Q_INVOKABLE bool addSale(int itemId, int quantity, double price, const QString &category,
+                             const QString &supplierName, const QString &supplierAddress);
     Q_INVOKABLE void searchSales(const QString &searchText);
-    Q_INVOKABLE void sortSales(const QString &column, Qt::SortOrder order = Qt::AscendingOrder);
+    Q_INVOKABLE void sortSales(const QString &column, Qt::SortOrder order);
     Q_INVOKABLE QVariantList getSalesDistribution() const;
     Q_INVOKABLE QVariantList getMonthlySales() const;
+    Q_INVOKABLE void insertTestData();
 
     int totalSales() const;
     double revenueThisMonth() const;
     double totalRevenue() const;
 
-    void setUserId(int userId);
-    Q_INVOKABLE void refresh();
+public slots:
+    void refresh();
 
 signals:
-    void errorOccurred(const QString &error);
     void totalSalesChanged();
     void revenueThisMonthChanged();
     void totalRevenueChanged();
-    void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles = QVector<int>());
+    void errorOccurred(const QString &error);
 
 private:
     struct SaleItem {
@@ -55,8 +60,12 @@ private:
         int itemId;
         QString itemName;
         int quantity;
+        double price;
         double totalPrice;
         QDateTime saleDate;
+        QString category;
+        QString supplierName;
+        QString supplierAddress;
     };
 
     QList<SaleItem> m_sales;

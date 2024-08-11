@@ -3,10 +3,34 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 Item {
+    anchors.fill: parent
+
+    Rectangle {
+        anchors.fill: parent
+        color: "#f0f0f0"
+    }
+
     ColumnLayout {
         anchors.centerIn: parent
         width: 300
-        spacing: 10
+        spacing: 20
+
+        Image {
+            source: "/home/satvara/Downloads/soham.jpg"
+            Layout.alignment: Qt.AlignHCenter
+            width: 100
+            height: 100
+            fillMode: Image.PreserveAspectFit
+        }
+
+        Text {
+            text: "Business Inventory Management System"
+            font.pixelSize: 18
+            font.bold: true
+            Layout.alignment: Qt.AlignHCenter
+            wrapMode: Text.WordWrap
+            horizontalAlignment: Text.AlignHCenter
+        }
 
         TextField {
             id: usernameField
@@ -25,38 +49,41 @@ Item {
             text: "Login"
             Layout.fillWidth: true
             onClicked: {
-                if (userModel.login(usernameField.text, passwordField.text)) {
-                    console.log("Login successful")
+                if (usernameField.text && passwordField.text) {
+                    userModel.login(usernameField.text, passwordField.text)
                 } else {
-                    console.log("Login failed")
+                    errorText.text = "Please enter both username and password"
+                    errorText.visible = true
                 }
             }
         }
 
-        Button {
-            text: "Sign Up"
-            Layout.fillWidth: true
-            onClicked: stackView.push("SignupView.qml")
+        Text {
+            text: "Don't have an account? Sign up"
+            color: "blue"
+            Layout.alignment: Qt.AlignHCenter
+            MouseArea {
+                anchors.fill: parent
+                onClicked: stackView.push("SignupView.qml")
+            }
         }
 
         Text {
             id: errorText
             color: "red"
-            Layout.fillWidth: true
-            wrapMode: Text.WordWrap
+            Layout.alignment: Qt.AlignHCenter
             visible: false
+            wrapMode: Text.Wrap
         }
     }
 
     Connections {
         target: userModel
         function onErrorOccurred(error) {
-            console.log("Error in LoginView:", error)
             errorText.text = error
             errorText.visible = true
         }
         function onLoginSuccessful() {
-            console.log("Login successful in LoginView")
             errorText.visible = false
         }
     }

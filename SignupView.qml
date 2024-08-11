@@ -3,10 +3,24 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 Item {
+    anchors.fill: parent
+
+    Rectangle {
+        anchors.fill: parent
+        color: "#f0f0f0"
+    }
+
     ColumnLayout {
         anchors.centerIn: parent
         width: 300
-        spacing: 10
+        spacing: 20
+
+        Text {
+            text: "Create an Account"
+            font.pixelSize: 24
+            font.bold: true
+            Layout.alignment: Qt.AlignHCenter
+        }
 
         TextField {
             id: usernameField
@@ -51,17 +65,20 @@ Item {
             }
         }
 
-        Button {
-            text: "Back to Login"
-            Layout.fillWidth: true
-            onClicked: stackView.pop()
+        Text {
+            text: "Already have an account? Log in"
+            color: "blue"
+            Layout.alignment: Qt.AlignHCenter
+            MouseArea {
+                anchors.fill: parent
+                onClicked: stackView.pop()
+            }
         }
 
         Text {
             id: errorText
             color: "red"
-            Layout.fillWidth: true
-            wrapMode: Text.WordWrap
+            Layout.alignment: Qt.AlignHCenter
             visible: false
         }
     }
@@ -69,14 +86,12 @@ Item {
     Connections {
         target: userModel
         function onErrorOccurred(error) {
-            console.log("Error in SignupView:", error)
             errorText.text = error
             errorText.visible = true
         }
         function onLoginSuccessful() {
-            console.log("Signup successful in SignupView")
             errorText.visible = false
-            stackView.replace("DashboardView.qml")
+            stackView.push("qrc:/qml/DashboardView.qml")
         }
     }
 }

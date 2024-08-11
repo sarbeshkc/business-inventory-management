@@ -3,15 +3,28 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 Item {
+    id: inventoryView
+
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: 20
         spacing: 20
 
-        Text {
-            text: "Inventory Management"
-            font.pixelSize: 24
-            font.bold: true
+        RowLayout {
+            Layout.fillWidth: true
+
+            Button {
+                text: "Menu"
+                onClicked: drawer.open()
+            }
+
+            Text {
+                text: "Inventory Management"
+                font.pixelSize: 24
+                font.bold: true
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+            }
         }
 
         RowLayout {
@@ -33,31 +46,47 @@ Item {
             }
         }
 
-        ListView {
+        TableView {
             Layout.fillWidth: true
             Layout.fillHeight: true
             clip: true
             model: inventoryModel
 
-            delegate: ItemDelegate {
-                width: parent.width
-                contentItem: RowLayout {
-                    Text { 
-                        text: name
-                        Layout.fillWidth: true
-                    }
-                    SpinBox {
-                        value: quantity
-                        onValueModified: inventoryModel.updateItem(id, name, value, price)
-                    }
-                    TextField {
-                        text: price.toFixed(2)
-                        validator: DoubleValidator { bottom: 0; decimals: 2 }
-                        onEditingFinished: inventoryModel.updateItem(id, name, quantity, parseFloat(text))
-                    }
-                    Button {
-                        text: "Delete"
-                        onClicked: inventoryModel.deleteItem(id)
+            TableViewColumn {
+                title: "Name"
+                role: "name"
+                width: 200
+            }
+            TableViewColumn {
+                title: "Quantity"
+                role: "quantity"
+                width: 100
+                delegate: SpinBox {
+                    value: styleData.value
+                    onValueModified: inventoryModel.updateItem(styleData.row, "quantity", value)
+                }
+            }
+            
+ TableViewColumn {
+                title: "Actions"
+                width: 100
+                delegate: Button {
+                    text: "Delete"
+                    onClicked: deleteConfirmationDialog.open()
+
+                    Dialog {
+                        id: deleteConfirmationDialog
+                        title: "Confirm Deletion"
+                        standardButtons: Dialog.Yes | Dialog.No
+                        modal: true
+
+                        Text {
+                            text: "Are you sure you want to delete this item?"
+                        }
+
+                        onAccepted: {
+                            inventoryModel.deleteItem(styleData.row)
+                        }
                     }
                 }
             }
@@ -69,15 +98,22 @@ Item {
         title: "Add New Item"
         standardButtons: Dialog.Ok | Dialog.Cancel
         modal: true
+        anchors.centerIn: parent
+        width: 300
 
         onAccepted: {
-            inventoryModel.addItem(nameField.text, parseInt(quantityField.text), parseFloat(priceField.text))
-            nameField.text = ""
-            quantityField.text = ""
-            priceField.text = ""
+            if (nameField.text && quantityField.text && priceField.text) {
+                inventoryModel.addItem(nameField.text, parseInt(quantityField.text), parseFloat(priceField.text))
+                nameField.text = ""
+                quantityField.text = ""
+                priceField.text = ""
+            } else {
+                errorDialog.open()
+            }
         }
 
         contentItem: ColumnLayout {
+            spacing: 10
             TextField {
                 id: nameField
                 placeholderText: "Item Name"
@@ -98,8 +134,20 @@ Item {
         }
     }
 
+    Dialog {
+        id: errorDialog
+        title: "Error"
+        standardButtons: Dialog.Ok
+        modal: true
+
+        Text {
+            text: "Please fill in all fields."
+        }
+    }
+
     Component.onCompleted: {
         console.log("Inventory view loaded")
         inventoryModel.refresh()
     }
 }
+

@@ -4,86 +4,101 @@ import QtQuick.Layouts 1.15
 import QtQuick.Window 2.15
 
 ApplicationWindow {
+    id: window
     visible: true
     width: 1024
     height: 768
     title: qsTr("Business Inventory Management System")
 
-    RowLayout {
-        anchors.fill: parent
-        spacing: 0
+    Drawer {
+        id: drawer
+        width: 250
+        height: window.height
+        interactive: userModel.isLoggedIn
 
-        // Sidebar (only visible when logged in)
-        Rectangle {
-            id: sidebar
-            Layout.preferredWidth: 200
-            Layout.fillHeight: true
-            color: "#f0f0f0"
-            visible: userModel.isLoggedIn
+        ColumnLayout {
+            anchors.fill: parent
+            spacing: 0
 
-            ColumnLayout {
-                anchors.fill: parent
-                spacing: 10
-                
-                Text {
-                    text: "Welcome, " + userModel.currentUser
-                    font.pixelSize: 16
-                    Layout.margins: 10
+            ItemDelegate {
+                text: qsTr("Dashboard")
+                width: parent.width
+                onClicked: {
+                    stackView.push("DashboardView.qml")
+                    drawer.close()
                 }
-
-                Button {
-                    text: "Dashboard"
-                    Layout.fillWidth: true
-                    onClicked: stackView.replace("DashboardView.qml")
+            }
+            ItemDelegate {
+                text: qsTr("Inventory")
+                width: parent.width
+                onClicked: {
+                    stackView.push("InventoryView.qml")
+                    drawer.close()
                 }
-
-                Button {
-                    text: "Inventory"
-                    Layout.fillWidth: true
-                    onClicked: stackView.replace("InventoryView.qml")
+            }
+            ItemDelegate {
+                text: qsTr("Sales")
+                width: parent.width
+                onClicked: {
+                    stackView.push("SalesView.qml")
+                    drawer.close()
                 }
-
-                Button {
-                    text: "Sales"
-                    Layout.fillWidth: true
-                    onClicked: stackView.replace("SalesView.qml")
+            }
+            ItemDelegate {
+                text: qsTr("Analytics")
+                width: parent.width
+                onClicked: {
+                    stackView.push("AnalyticsView.qml")
+                    drawer.close()
                 }
-
-                Item { Layout.fillHeight: true } // Spacer
-
-                Button {
-                    text: "Logout"
-                    Layout.fillWidth: true
-                    onClicked: {
-                        userModel.logout();
-                        stackView.replace("LoginView.qml");
-                    }
+            }
+            ItemDelegate {
+                text: qsTr("Logout")
+                width: parent.width
+                onClicked: {
+                    userModel.logout()
+                    stackView.pop(null)
+                    stackView.push("LoginView.qml")
+                    drawer.close()
                 }
             }
         }
-
-        // Main content area
-        StackView {
-            id: stackView
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            initialItem: LoginView {}
-        }
     }
 
-    // Handle login success
+    StackView {
+        id: stackView
+        anchors.fill: parent
+        initialItem: LoginView {}
+    }
+
     Connections {
         target: userModel
         function onLoginSuccessful() {
             console.log("Login successful, transitioning to dashboard")
-            stackView.replace("DashboardView.qml")
+            stackView.push("DashboardView.qml")
         }
         function onErrorOccurred(error) {
             console.log("Error occurred:", error)
+            errorDialog.text = error
+            errorDialog.open()
+        }
+    }
+
+    Dialog {
+        id: errorDialog
+        title: "Error"
+        standardButtons: Dialog.Ok
+        modal: true
+
+        property alias text: errorText.text
+
+        Text {
+            id: errorText
+            wrapMode: Text.Wrap
         }
     }
 
     Component.onCompleted: {
-        console.log("Main QML loaded");
+        console.log("Main QML loaded")
     }
 }
