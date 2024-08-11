@@ -13,10 +13,10 @@ Item {
         RowLayout {
             Layout.fillWidth: true
 
-            Button {
-                text: "Menu"
-                onClicked: sideBar.open()
-            }
+   //         Button {
+     //           text: "Menu"
+       //         onClicked: sideBar.open()
+         //   }
 
             Text {
                 text: "Sales Management"
@@ -99,17 +99,17 @@ Item {
                 Button {
                     text: "Dashboard"
                     Layout.fillWidth: true
-                    onClicked: stackView.push("qrc:/qml/DashboardView.qml")
+                    onClicked: stackView.push("DashboardView.qml")
                 }
                 Button {
                     text: "Inventory"
                     Layout.fillWidth: true
-                    onClicked: stackView.push("qrc:/qml/InventoryView.qml")
+                    onClicked: stackView.push("InventoryView.qml")
                 }
                 Button {
                     text: "Analytics"
                     Layout.fillWidth: true
-                    onClicked: stackView.push("qrc:/qml/AnalyticsView.qml")
+                    onClicked: stackView.push("AnalyticsView.qml")
                 }
             }
         }

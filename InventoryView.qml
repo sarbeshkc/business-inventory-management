@@ -3,7 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 Item {
-    id: inventoryView
+    anchors.fill: parent
 
     ColumnLayout {
         anchors.fill: parent
@@ -13,10 +13,10 @@ Item {
         RowLayout {
             Layout.fillWidth: true
 
-            Button {
-                text: "Menu"
-                onClicked: drawer.open()
-            }
+//            Button {
+  //              text: "Menu"
+    //            onClicked: sideBar.open()
+//            }
 
             Text {
                 text: "Inventory Management"
@@ -46,48 +46,55 @@ Item {
             }
         }
 
-        TableView {
+        ListView {
             Layout.fillWidth: true
             Layout.fillHeight: true
             clip: true
             model: inventoryModel
-
-            TableViewColumn {
-                title: "Name"
-                role: "name"
-                width: 200
-            }
-            TableViewColumn {
-                title: "Quantity"
-                role: "quantity"
-                width: 100
-                delegate: SpinBox {
-                    value: styleData.value
-                    onValueModified: inventoryModel.updateItem(styleData.row, "quantity", value)
+            delegate: ItemDelegate {
+                width: parent.width
+                contentItem: RowLayout {
+                    Text { 
+                        text: name
+                        Layout.fillWidth: true
+                    }
+                    SpinBox {
+                        value: quantity
+                        onValueModified: inventoryModel.updateItem(id, name, value, price)
+                    }
+                    TextField {
+                        text: price.toFixed(2)
+                        validator: DoubleValidator { bottom: 0; decimals: 2 }
+                        onEditingFinished: inventoryModel.updateItem(id, name, quantity, parseFloat(text))
+                    }
+                    Button {
+                        text: "Delete"
+                        onClicked: inventoryModel.deleteItem(id)
+                    }
                 }
             }
-            
- TableViewColumn {
-                title: "Actions"
-                width: 100
-                delegate: Button {
-                    text: "Delete"
-                    onClicked: deleteConfirmationDialog.open()
+        }
 
-                    Dialog {
-                        id: deleteConfirmationDialog
-                        title: "Confirm Deletion"
-                        standardButtons: Dialog.Yes | Dialog.No
-                        modal: true
-
-                        Text {
-                            text: "Are you sure you want to delete this item?"
-                        }
-
-                        onAccepted: {
-                            inventoryModel.deleteItem(styleData.row)
-                        }
-                    }
+        GroupBox {
+            title: "Quick Actions"
+            Layout.fillWidth: true
+            RowLayout {
+                anchors.fill: parent
+                spacing: 10
+                Button {
+                    text: "Dashboard"
+                    Layout.fillWidth: true
+                    onClicked: stackView.push("DashboardView.qml")
+                }
+                Button {
+                    text: "Sales"
+                    Layout.fillWidth: true
+                    onClicked: stackView.push("SalesView.qml")
+                }
+                Button {
+                    text: "Analytics"
+                    Layout.fillWidth: true
+                    onClicked: stackView.push("AnalyticsView.qml")
                 }
             }
         }
@@ -102,14 +109,10 @@ Item {
         width: 300
 
         onAccepted: {
-            if (nameField.text && quantityField.text && priceField.text) {
-                inventoryModel.addItem(nameField.text, parseInt(quantityField.text), parseFloat(priceField.text))
-                nameField.text = ""
-                quantityField.text = ""
-                priceField.text = ""
-            } else {
-                errorDialog.open()
-            }
+            inventoryModel.addItem(nameField.text, parseInt(quantityField.text), parseFloat(priceField.text))
+            nameField.text = ""
+            quantityField.text = ""
+            priceField.text = ""
         }
 
         contentItem: ColumnLayout {
@@ -134,20 +137,8 @@ Item {
         }
     }
 
-    Dialog {
-        id: errorDialog
-        title: "Error"
-        standardButtons: Dialog.Ok
-        modal: true
-
-        Text {
-            text: "Please fill in all fields."
-        }
-    }
-
     Component.onCompleted: {
         console.log("Inventory view loaded")
         inventoryModel.refresh()
     }
 }
-

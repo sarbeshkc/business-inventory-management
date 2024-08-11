@@ -13,10 +13,10 @@ Item {
         RowLayout {
             Layout.fillWidth: true
 
-            Button {
-                text: "Menu"
-                onClicked: sideBar.open()
-            }
+        //    Button {
+        //        text: "Menu"
+         //       onClicked: sideBar.open()
+          //  }
 
             Text {
                 text: "Welcome, " + userModel.currentUser
@@ -85,7 +85,7 @@ Item {
                 Button {
                     text: "Record Sale"
                     Layout.fillWidth: true
-                    onClicked: stackView.push("qrc:/qml/SalesView.qml")
+                    onClicked: stackView.push("SalesView.qml")
                 }
 
                 Button {

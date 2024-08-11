@@ -52,16 +52,7 @@ ApplicationWindow {
                     drawer.close()
                 }
             }
-            ItemDelegate {
-                text: qsTr("Logout")
-                width: parent.width
-                onClicked: {
-                    userModel.logout()
-                    stackView.pop(null)
-                    stackView.push("LoginView.qml")
-                    drawer.close()
-                }
-            }
+
         }
     }
 
