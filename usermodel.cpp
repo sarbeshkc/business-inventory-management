@@ -1,4 +1,3 @@
-// usermodel.cpp
 #include "usermodel.h"
 #include <QCryptographicHash>
 #include <QDebug>
@@ -16,7 +15,12 @@ bool UserModel::login(const QString &username, const QString &password) {
       "SELECT id, password_hash FROM Users WHERE username = :username");
   query.bindValue(":username", username);
 
-  if (query.exec() && query.next()) {
+  if (!query.exec()) {
+    emit errorOccurred("Database error: " + query.lastError().text());
+    return false;
+  }
+
+  if (query.next()) {
     QString storedHash = query.value("password_hash").toString();
     QString inputHash = QString(
         QCryptographicHash::hash(password.toUtf8(), QCryptographicHash::Sha256)
@@ -48,7 +52,12 @@ bool UserModel::signup(const QString &username, const QString &password,
   query.prepare("SELECT username FROM Users WHERE username = :username");
   query.bindValue(":username", username);
 
-  if (query.exec() && query.next()) {
+  if (!query.exec()) {
+    emit errorOccurred("Database error: " + query.lastError().text());
+    return false;
+  }
+
+  if (query.next()) {
     emit errorOccurred(
         "Username already exists. Please choose a different username.");
     return false;

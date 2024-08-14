@@ -24,9 +24,9 @@ public:
     int currentUserId() const;
 
 signals:
-    void errorOccurred(const QString &error);
     void loginStatusChanged();
     void loginSuccessful();
+    void errorOccurred(const QString &error);
 
 private:
     DatabaseManager *m_dbManager;

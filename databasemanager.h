@@ -1,22 +1,27 @@
-#pragma once
+#ifndef DATABASEMANAGER_H
+#define DATABASEMANAGER_H
+
 #include <QObject>
 #include <QSqlDatabase>
 
-class DatabaseManager : public QObject {
-  Q_OBJECT
+class DatabaseManager : public QObject
+{
+    Q_OBJECT
 
 public:
-  explicit DatabaseManager(QObject *parent = nullptr);
-  ~DatabaseManager();
+    explicit DatabaseManager(QObject *parent = nullptr);
+    ~DatabaseManager();
 
-  bool initialize();
-  QSqlDatabase database() const;
+    bool initialize();
+    QSqlDatabase database() const;
 
 signals:
-  void errorOccurred(const QString &error);
+    void errorOccurred(const QString &error);
 
 private:
-  bool createTables();
+    bool createTables();
 
-  QSqlDatabase m_db;
+    QSqlDatabase m_db;
 };
+
+#endif // DATABASEMANAGER_H

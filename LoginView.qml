@@ -3,11 +3,11 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 Item {
-    anchors.fill: parent
+    id: root
 
     Rectangle {
         anchors.fill: parent
-        color: "#f0f0f0"
+        color: "#1e2329"
     }
 
     ColumnLayout {
@@ -15,18 +15,11 @@ Item {
         width: 300
         spacing: 20
 
-        Image {
-            source: "/home/satvara/Downloads/soham.jpg"
-            Layout.alignment: Qt.AlignHCenter
-            width: 100
-            height: 100
-            fillMode: Image.PreserveAspectFit
-        }
-
         Text {
             text: "Business Inventory Management System"
-            font.pixelSize: 18
+            font.pixelSize: 24
             font.bold: true
+            color: "white"
             Layout.alignment: Qt.AlignHCenter
             wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignHCenter
@@ -36,6 +29,12 @@ Item {
             id: usernameField
             placeholderText: "Username"
             Layout.fillWidth: true
+            background: Rectangle {
+                color: "#2c3137"
+                radius: 5
+            }
+            color: "white"
+            placeholderTextColor: "#6c757d"
         }
 
         TextField {
@@ -43,11 +42,27 @@ Item {
             placeholderText: "Password"
             echoMode: TextInput.Password
             Layout.fillWidth: true
+            background: Rectangle {
+                color: "#2c3137"
+                radius: 5
+            }
+            color: "white"
+            placeholderTextColor: "#6c757d"
         }
 
         Button {
             text: "Login"
             Layout.fillWidth: true
+            background: Rectangle {
+                color: "#3050c0"
+                radius: 5
+            }
+            contentItem: Text {
+                text: parent.text
+                color: "white"
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
             onClicked: {
                 if (usernameField.text && passwordField.text) {
                     userModel.login(usernameField.text, passwordField.text)
@@ -60,7 +75,7 @@ Item {
 
         Text {
             text: "Don't have an account? Sign up"
-            color: "blue"
+            color: "#3050c0"
             Layout.alignment: Qt.AlignHCenter
             MouseArea {
                 anchors.fill: parent
@@ -70,7 +85,7 @@ Item {
 
         Text {
             id: errorText
-            color: "red"
+            color: "#dc3545"
             Layout.alignment: Qt.AlignHCenter
             visible: false
             wrapMode: Text.Wrap

@@ -14,13 +14,19 @@ SOURCES += \
     databasemanager.cpp \
     usermodel.cpp \
     inventorymodel.cpp \
-    salesmodel.cpp
+    salesmodel.cpp \
+    userdashboard.cpp
+
 
 HEADERS += \
     databasemanager.h \
     usermodel.h \
     inventorymodel.h \
-    salesmodel.h
+    salesmodel.h \
+    userdashboard.h
+
+
+QMAKE_EXTRA_COMPILERS+=compiler_json
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

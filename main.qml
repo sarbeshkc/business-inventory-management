@@ -1,95 +1,152 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtQuick.Window 2.15
 
 ApplicationWindow {
-    id: window
     visible: true
     width: 1024
     height: 768
     title: qsTr("Business Inventory Management System")
 
-    Drawer {
-        id: drawer
-        width: 250
-        height: window.height
-        interactive: userModel.isLoggedIn
+    Rectangle {
+        anchors.fill: parent
+        color: "#1e2329"
+    }
 
-        ColumnLayout {
-            anchors.fill: parent
+    ColumnLayout {
+        anchors.fill: parent
+        spacing: 0
+
+        // Top Bar
+        Rectangle {
+            Layout.fillWidth: true
+            height: 60
+            color: "#212529"
+            visible: userModel.isLoggedIn
+
+            RowLayout {
+                anchors.fill: parent
+                anchors.leftMargin: 20
+                anchors.rightMargin: 20
+
+                Text {
+                    text: "Welcome, " + userModel.currentUser
+                    color: "white"
+                    font.pixelSize: 16
+                }
+
+                Item { Layout.fillWidth: true }
+
+                Row {
+                    spacing: 10
+                    Rectangle {
+                        width: 30
+                        height: 30
+                        color: "transparent"
+                        border.color: "white"
+                        border.width: 1
+                        Text {
+                            anchors.centerIn: parent
+                            text: "N"
+                            color: "white"
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: notificationSystem.showNotifications()
+                        }
+                    }
+                }
+            }
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
             spacing: 0
 
-            ItemDelegate {
-                text: qsTr("Dashboard")
-                width: parent.width
-                onClicked: {
-                    stackView.push("DashboardView.qml")
-                    drawer.close()
-                }
-            }
-            ItemDelegate {
-                text: qsTr("Inventory")
-                width: parent.width
-                onClicked: {
-                    stackView.push("InventoryView.qml")
-                    drawer.close()
-                }
-            }
-            ItemDelegate {
-                text: qsTr("Sales")
-                width: parent.width
-                onClicked: {
-                    stackView.push("SalesView.qml")
-                    drawer.close()
-                }
-            }
-            ItemDelegate {
-                text: qsTr("Analytics")
-                width: parent.width
-                onClicked: {
-                    stackView.push("AnalyticsView.qml")
-                    drawer.close()
+            // Sidebar (only visible when logged in)
+            Rectangle {
+                id: sidebar
+                width: 200
+                Layout.fillHeight: true
+                color: "#272c33"
+                visible: userModel.isLoggedIn
+
+                ColumnLayout {
+                    anchors.fill: parent
+                    spacing: 0
+
+                    Repeater {
+                        model: ["Dashboard", "Inventory", "Sales", "Analytics"]
+                        delegate: ItemDelegate {
+                            Layout.fillWidth: true
+                            height: 50
+                            contentItem: Text {
+                                text: modelData
+                                color: "white"
+                                font.pixelSize: 14
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                            background: Rectangle {
+                                color: "transparent"
+                            }
+                            onClicked: {
+                                switch(modelData) {
+                                    case "Dashboard":
+                                        stackView.replace("DashboardView.qml")
+                                        break
+                                    case "Inventory":
+                                        stackView.replace("/InventoryView.qml")
+                                        break
+                                    case "Sales":
+                                        stackView.replace("SalesView.qml")
+                                        break
+                                    case "Analytics":
+                                        stackView.replace("AnalyticsView.qml")
+                                        break
+                                }
+                            }
+                        }
+                    }
+
+                    Item { Layout.fillHeight: true }
+
+                    Button {
+                        text: "Logout"
+                        Layout.fillWidth: true
+                        onClicked: {
+                            userModel.logout()
+                            stackView.replace("LoginView.qml")
+                        }
+                    }
                 }
             }
 
+            // Main content area
+            StackView {
+                id: stackView
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                initialItem: LoginView {}
+            }
         }
     }
 
-    StackView {
-        id: stackView
+    NotificationSystem {
+        id: notificationSystem
         anchors.fill: parent
-        initialItem: LoginView {}
     }
 
+    // Handle login success
     Connections {
         target: userModel
         function onLoginSuccessful() {
             console.log("Login successful, transitioning to dashboard")
-            stackView.push("DashboardView.qml")
+            stackView.replace("qrc:/DashboardView.qml")
+            userDashboard.refresh()
         }
         function onErrorOccurred(error) {
             console.log("Error occurred:", error)
-            errorDialog.text = error
-            errorDialog.open()
         }
-    }
-
-    Dialog {
-        id: errorDialog
-        title: "Error"
-        standardButtons: Dialog.Ok
-        modal: true
-
-        property alias text: errorText.text
-
-        Text {
-            id: errorText
-            wrapMode: Text.Wrap
-        }
-    }
-
-    Component.onCompleted: {
-        console.log("Main QML loaded")
     }
 }

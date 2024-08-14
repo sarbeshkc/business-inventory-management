@@ -1,93 +1,97 @@
-
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import QtCharts 2.15
 
 Item {
+    id: root
+
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: 20
         spacing: 20
 
         Text {
-            text: "Welcome, " + userModel.currentUser
+            text: "Analytics"
             font.pixelSize: 24
             font.bold: true
+            color: "white"
         }
 
-        // Inventory Summary
-        GroupBox {
-            title: "Inventory Summary"
+        // Summary Cards
+        GridLayout {
             Layout.fillWidth: true
+            columns: 2
+            rowSpacing: 10
+            columnSpacing: 10
 
-            ColumnLayout {
-                anchors.fill: parent
+            Repeater {
+                model: [
+                    {title: "Total Revenue", value: "$" + userDashboard.totalRevenue.toFixed(2)},
+                    {title: "Total Inventory Value", value: "$" + userDashboard.totalInventoryValue.toFixed(2)},
+                    {title: "Total Sales", value: userDashboard.totalSales},
+                    {title: "Profit Margin", value: userDashboard.profitMargin.toFixed(2) + "%"}
+                ]
 
-                Text {
-                    text: "Total Items: " + inventoryModel.totalItems
-                    font.pixelSize: 16
-                }
+                delegate: Rectangle {
+                    Layout.fillWidth: true
+                    height: 80
+                    color: "#2c3137"
+                    radius: 5
 
-                Text {
-                    text: "Low Stock Items: " + inventoryModel.lowStockItems
-                    font.pixelSize: 16
-                }
-            }
-        }
+                    ColumnLayout {
+                        anchors.fill: parent
+                        anchors.margins: 10
+                        spacing: 5
 
-        // Top Items List
-        GroupBox {
-            title: "Top 5 Items by Quantity"
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-
-            ListView {
-                anchors.fill: parent
-                model: inventoryModel.getTopItems(5)
-                delegate: ItemDelegate {
-                    width: parent.width
-                    contentItem: RowLayout {
-                        Text { 
-                            text: modelData.name
-                            Layout.fillWidth: true
+                        Text {
+                            text: modelData.title
+                            font.pixelSize: 14
+                            color: "white"
                         }
-                        Text { 
-                            text: modelData.quantity
-                            Layout.preferredWidth: 100
+
+                        Text {
+                            text: modelData.value
+                            font.pixelSize: 18
+                            font.bold: true
+                            color: "white"
                         }
                     }
                 }
             }
         }
 
-        // Navigation Buttons
-        RowLayout {
+        // Recent Activities
+        GroupBox {
+            title: "Recent Activities"
             Layout.fillWidth: true
-            spacing: 10
+            Layout.fillHeight: true
 
-            Button {
-                text: "Manage Inventory"
-                onClicked: stackView.push("InventoryView.qml")
-                Layout.fillWidth: true
+            background: Rectangle {
+                color: "#2c3137"
+                border.color: "#3a3f48"
             }
 
-            Button {
-                text: "Manage Sales"
-                onClicked: stackView.push("SalesView.qml")
-                Layout.fillWidth: true
+            ListView {
+                anchors.fill: parent
+                model: userDashboard.recentActivities
+                clip: true
+                delegate: ItemDelegate {
+                    width: parent.width
+                    contentItem: RowLayout {
+                        Text { text: modelData.date.toLocaleString(Qt.locale(), "yyyy-MM-dd hh:mm"); color: "white"; Layout.preferredWidth: 150 }
+                        Text { text: modelData.type; color: "white"; Layout.preferredWidth: 100 }
+                        Text { text: modelData.itemName; color: "white"; Layout.fillWidth: true }
+                        Text { text: modelData.quantity; color: "white"; Layout.preferredWidth: 50 }
+                        Text { text: "$" + modelData.price.toFixed(2); color: "white"; Layout.preferredWidth: 80 }
+                    }
+                }
             }
         }
     }
 
     Component.onCompleted: {
-        console.log("Dashboard view loaded")
-        inventoryModel.refresh()
-    }
-
-    Connections {
-        target: inventoryModel
-        function onDataChanged() {
-            console.log("Inventory data changed")
-        }
+        console.log("AnalyticsView loaded")
+        userDashboard.refresh()
     }
 }

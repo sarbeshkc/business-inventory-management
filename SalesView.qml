@@ -3,7 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 Item {
-    id: salesView
+    id: root
 
     ColumnLayout {
         anchors.fill: parent
@@ -12,34 +12,24 @@ Item {
 
         RowLayout {
             Layout.fillWidth: true
-
-   //         Button {
-     //           text: "Menu"
-       //         onClicked: sideBar.open()
-         //   }
+            spacing: 10
 
             Text {
                 text: "Sales Management"
                 font.pixelSize: 24
                 font.bold: true
-                Layout.fillWidth: true
-                horizontalAlignment: Text.AlignHCenter
+                color: "white"
             }
-        }
 
-        RowLayout {
-            Layout.fillWidth: true
+            Item { Layout.fillWidth: true }
+
             TextField {
                 id: searchField
                 placeholderText: "Search sales..."
-                Layout.fillWidth: true
+                Layout.preferredWidth: 200
                 onTextChanged: salesModel.searchSales(text)
             }
-            ComboBox {
-                id: sortComboBox
-                model: ["Date", "Item", "Quantity", "Total Price", "Category", "Supplier"]
-                onCurrentTextChanged: salesModel.sortSales(currentText, Qt.AscendingOrder)
-            }
+
             Button {
                 text: "Add Sale"
                 onClicked: addSaleDialog.open()
@@ -47,69 +37,26 @@ Item {
         }
 
         ListView {
+            id: salesListView
             Layout.fillWidth: true
             Layout.fillHeight: true
             clip: true
             model: salesModel
-            delegate: ItemDelegate {
-                width: ListView.view.width
-                contentItem: RowLayout {
-                    Text { 
-                        text: Qt.formatDateTime(saleDate, "yyyy-MM-dd hh:mm")
-                        Layout.preferredWidth: 150
-                    }
-                    Text { 
-                        text: itemName
-                        Layout.preferredWidth: 150
-                    }
-                    Text { 
-                        text: quantity.toString()
-                        Layout.preferredWidth: 80
-                    }
-                    Text { 
-                        text: "$" + price.toFixed(2)
-                        Layout.preferredWidth: 80
-                    }
-                    Text { 
-                        text: "$" + totalPrice.toFixed(2)
-                        Layout.preferredWidth: 80
-                    }
-                    Text { 
-                        text: category
-                        Layout.preferredWidth: 100
-                    }
-                    Text { 
-                        text: supplierName
-                        Layout.preferredWidth: 150
-                    }
-                    Text { 
-                        text: supplierAddress
-                        Layout.fillWidth: true
-                    }
-                }
-            }
-        }
+            delegate: Rectangle {
+                width: salesListView.width
+                height: 50
+                color: index % 2 === 0 ? "#2c3137" : "#252a31"
 
-        GroupBox {
-            title: "Quick Actions"
-            Layout.fillWidth: true
-            RowLayout {
-                anchors.fill: parent
-                spacing: 10
-                Button {
-                    text: "Dashboard"
-                    Layout.fillWidth: true
-                    onClicked: stackView.push("DashboardView.qml")
-                }
-                Button {
-                    text: "Inventory"
-                    Layout.fillWidth: true
-                    onClicked: stackView.push("InventoryView.qml")
-                }
-                Button {
-                    text: "Analytics"
-                    Layout.fillWidth: true
-                    onClicked: stackView.push("AnalyticsView.qml")
+                RowLayout {
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    spacing: 10
+
+                    Text { text: Qt.formatDateTime(model.saleDate, "yyyy-MM-dd hh:mm"); color: "white"; Layout.preferredWidth: 150 }
+                    Text { text: model.itemName || ""; color: "white"; Layout.fillWidth: true }
+                    Text { text: model.quantity !== undefined ? model.quantity : ""; color: "white"; Layout.preferredWidth: 80 }
+                    Text { text: model.price !== undefined ? "$" + model.price.toFixed(2) : ""; color: "white"; Layout.preferredWidth: 80 }
+                    Text { text: model.totalPrice !== undefined ? "$" + model.totalPrice.toFixed(2) : ""; color: "white"; Layout.preferredWidth: 100 }
                 }
             }
         }
@@ -118,30 +65,16 @@ Item {
     Dialog {
         id: addSaleDialog
         title: "Add New Sale"
-        standardButtons: Dialog.Ok | Dialog.Cancel
         modal: true
-        anchors.centerIn: parent
-        width: 300
+        standardButtons: Dialog.Ok | Dialog.Cancel
 
-        onAccepted: {
-            salesModel.addSale(
-                itemComboBox.currentValue,
-                parseInt(quantityField.text),
-                parseFloat(priceField.text),
-                categoryField.text,
-                supplierNameField.text,
-                supplierAddressField.text
-            )
-            itemComboBox.currentIndex = -1
-            quantityField.text = ""
-            priceField.text = ""
-            categoryField.text = ""
-            supplierNameField.text = ""
-            supplierAddressField.text = ""
-        }
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
 
-        contentItem: ColumnLayout {
+        ColumnLayout {
             spacing: 10
+            width: 300
+
             ComboBox {
                 id: itemComboBox
                 model: inventoryModel
@@ -149,38 +82,54 @@ Item {
                 valueRole: "id"
                 Layout.fillWidth: true
             }
-            TextField {
+
+            SpinBox {
                 id: quantityField
-                placeholderText: "Quantity"
-                validator: IntValidator { bottom: 1 }
+                from: 1
+                to: 1000000
                 Layout.fillWidth: true
             }
+
             TextField {
                 id: priceField
                 placeholderText: "Price"
                 validator: DoubleValidator { bottom: 0; decimals: 2 }
                 Layout.fillWidth: true
             }
+
             TextField {
                 id: categoryField
                 placeholderText: "Category"
                 Layout.fillWidth: true
             }
+
             TextField {
                 id: supplierNameField
                 placeholderText: "Supplier Name"
                 Layout.fillWidth: true
             }
+
             TextField {
                 id: supplierAddressField
                 placeholderText: "Supplier Address"
                 Layout.fillWidth: true
             }
         }
-    }
 
-    Component.onCompleted: {
-        console.log("Sales view loaded")
-        salesModel.refresh()
+        onAccepted: {
+            salesModel.addSale(
+                itemComboBox.currentValue,
+                quantityField.value,
+                parseFloat(priceField.text),
+                categoryField.text,
+                supplierNameField.text,
+                supplierAddressField.text
+            )
+            quantityField.value = 1
+            priceField.text = ""
+            categoryField.text = ""
+            supplierNameField.text = ""
+            supplierAddressField.text = ""
+        }
     }
 }
