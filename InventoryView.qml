@@ -58,19 +58,6 @@ Item {
                     Text { text: model.price !== undefined ? "$" + model.price.toFixed(2) : ""; color: "#4CAF50"; font.pixelSize: 16; Layout.preferredWidth: 100 }
                     Text { text: model.supplierName || ""; color: "#a0a0a0"; font.pixelSize: 14; Layout.preferredWidth: 150 }
 
-                    Button {
-                        text: "Edit"
-                        onClicked: {
-                            editItemDialog.itemId = model.id
-                            editItemDialog.nameField.text = model.name || ""
-                            editItemDialog.categoryField.text = model.category || ""
-                            editItemDialog.quantityField.value = model.quantity || 0
-                            editItemDialog.priceField.text = model.price !== undefined ? model.price.toFixed(2) : ""
-                            editItemDialog.supplierNameField.text = model.supplierName || ""
-                            editItemDialog.supplierAddressField.text = model.supplierAddress || ""
-                            editItemDialog.open()
-                        }
-                    }
 
                     Button {
                         text: "Delete"
@@ -172,7 +159,14 @@ Item {
                     text: "Add Item"
                     enabled: nameField.text !== "" && categoryField.text !== "" && priceField.text !== ""
                     onClicked: {
-                        inventoryModel.addItem(nameField.text, categoryField.text, quantityField.value, parseFloat(priceField.text), supplierNameField.text, supplierAddressField.text)
+                        inventoryModel.addItem(
+                            nameField.text,
+                            categoryField.text,
+                            quantityField.value,
+                            parseFloat(priceField.text),
+                            supplierNameField.text,
+                            supplierAddressField.text
+                        )
                         addItemDialog.close()
                         nameField.text = ""
                         categoryField.text = ""
@@ -254,7 +248,7 @@ Item {
                     onClicked: editItemDialog.close()
                 }
 
-               Button {
+                Button {
                     text: "Save Changes"
                     enabled: editNameField.text !== "" && editCategoryField.text !== "" && editPriceField.text !== ""
                     onClicked: {
@@ -272,5 +266,34 @@ Item {
                 }
             }
         }
+    }
+
+    Connections {
+        target: inventoryModel
+        function onDataChanged() {
+            inventoryListView.forceLayout()
+        }
+        function onErrorOccurred(error) {
+            errorDialog.errorMessage = error
+            errorDialog.open()
+        }
+    }
+
+    Dialog {
+        id: errorDialog
+        title: "Error"
+        modal: true
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+
+        property string errorMessage: ""
+
+        Label {
+            text: errorDialog.errorMessage
+            color: "white"
+            wrapMode: Text.WordWrap
+        }
+
+        standardButtons: Dialog.Ok
     }
 }

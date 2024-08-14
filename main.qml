@@ -1,3 +1,4 @@
+import QtQuick 2.1
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
@@ -96,7 +97,7 @@ ApplicationWindow {
                                         stackView.replace("DashboardView.qml")
                                         break
                                     case "Inventory":
-                                        stackView.replace("/InventoryView.qml")
+                                        stackView.replace("InventoryView.qml")
                                         break
                                     case "Sales":
                                         stackView.replace("SalesView.qml")
@@ -142,7 +143,7 @@ ApplicationWindow {
         target: userModel
         function onLoginSuccessful() {
             console.log("Login successful, transitioning to dashboard")
-            stackView.replace("qrc:/DashboardView.qml")
+            stackView.replace("DashboardView.qml")
             userDashboard.refresh()
         }
         function onErrorOccurred(error) {

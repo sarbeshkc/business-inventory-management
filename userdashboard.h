@@ -15,15 +15,12 @@ class UserDashboard : public QObject
     Q_PROPERTY(double totalInventoryValue READ totalInventoryValue NOTIFY totalInventoryValueChanged)
     Q_PROPERTY(int totalSales READ totalSales NOTIFY totalSalesChanged)
     Q_PROPERTY(double totalRevenue READ totalRevenue NOTIFY totalRevenueChanged)
+    Q_PROPERTY(double totalCost READ totalCost NOTIFY totalCostChanged)
+    Q_PROPERTY(double grossProfit READ grossProfit NOTIFY grossProfitChanged)
     Q_PROPERTY(double profitMargin READ profitMargin NOTIFY profitMarginChanged)
     Q_PROPERTY(QVariantList recentActivities READ recentActivities NOTIFY recentActivitiesChanged)
     Q_PROPERTY(QVariantList lowStockItemsList READ lowStockItemsList NOTIFY lowStockItemsListChanged)
-    Q_PROPERTY(QStringList monthlyRevenueLabels READ monthlyRevenueLabels NOTIFY monthlyRevenueDataChanged)
-    Q_PROPERTY(QVariantList monthlyRevenueData READ monthlyRevenueData NOTIFY monthlyRevenueDataChanged)
-    Q_PROPERTY(double maxMonthlyRevenue READ maxMonthlyRevenue NOTIFY monthlyRevenueDataChanged)
-    Q_PROPERTY(QStringList topProductNames READ topProductNames NOTIFY topProductsDataChanged)
-    Q_PROPERTY(QVariantList topProductValues READ topProductValues NOTIFY topProductsDataChanged)
-    Q_PROPERTY(double maxTopProductValue READ maxTopProductValue NOTIFY topProductsDataChanged)
+    Q_PROPERTY(QVariantList monthlyProfitData READ monthlyProfitData NOTIFY monthlyProfitDataChanged)
 
 public:
     explicit UserDashboard(DatabaseManager *dbManager, InventoryModel *inventoryModel, SalesModel *salesModel, QObject *parent = nullptr);
@@ -36,15 +33,12 @@ public:
     double totalInventoryValue() const;
     int totalSales() const;
     double totalRevenue() const;
+    double totalCost() const;
+    double grossProfit() const;
     double profitMargin() const;
     QVariantList recentActivities() const;
     QVariantList lowStockItemsList() const;
-    QStringList monthlyRevenueLabels() const;
-    QVariantList monthlyRevenueData() const;
-    double maxMonthlyRevenue() const;
-    QStringList topProductNames() const;
-    QVariantList topProductValues() const;
-    double maxTopProductValue() const;
+    QVariantList monthlyProfitData() const;
 
 signals:
     void errorOccurred(const QString &error);
@@ -53,19 +47,18 @@ signals:
     void totalInventoryValueChanged();
     void totalSalesChanged();
     void totalRevenueChanged();
+    void totalCostChanged();
+    void grossProfitChanged();
     void profitMarginChanged();
     void recentActivitiesChanged();
     void lowStockItemsListChanged();
-    void monthlyRevenueDataChanged();
-    void topProductsDataChanged();
+    void monthlyProfitDataChanged();
 
 private:
     void updateRecentActivities();
     void updateLowStockItems();
-    void updateMonthlyRevenue();
-    void updateTopProducts();
-    int calculateLowStockItems() const;
-    double calculateTotalInventoryValue() const;
+    void calculateProfitAndLoss();
+    void fetchMonthlyProfitData();
 
     DatabaseManager *m_dbManager;
     InventoryModel *m_inventoryModel;
@@ -76,15 +69,12 @@ private:
     double m_totalInventoryValue;
     int m_totalSales;
     double m_totalRevenue;
+    double m_totalCost;
+    double m_grossProfit;
     double m_profitMargin;
     QVariantList m_recentActivities;
     QVariantList m_lowStockItemsList;
-    QStringList m_monthlyRevenueLabels;
-    QVariantList m_monthlyRevenueData;
-    double m_maxMonthlyRevenue;
-    QStringList m_topProductNames;
-    QVariantList m_topProductValues;
-    double m_maxTopProductValue;
+    QVariantList m_monthlyProfitData;
 };
 
 #endif // USERDASHBOARD_H

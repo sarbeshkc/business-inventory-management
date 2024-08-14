@@ -2,12 +2,11 @@
 #include <QDebug>
 #include <QSqlQuery>
 #include <QSqlError>
-#include <QDateTime>
 
 UserDashboard::UserDashboard(DatabaseManager *dbManager, InventoryModel *inventoryModel, SalesModel *salesModel, QObject *parent)
     : QObject(parent), m_dbManager(dbManager), m_inventoryModel(inventoryModel), m_salesModel(salesModel),
       m_userId(-1), m_totalInventoryItems(0), m_lowStockItems(0), m_totalInventoryValue(0.0),
-      m_totalSales(0), m_totalRevenue(0.0), m_profitMargin(0.0), m_maxMonthlyRevenue(0.0), m_maxTopProductValue(0.0)
+      m_totalSales(0), m_totalRevenue(0.0), m_totalCost(0.0), m_grossProfit(0.0), m_profitMargin(0.0)
 {
     qDebug() << "UserDashboard constructed";
 }
@@ -17,6 +16,8 @@ void UserDashboard::setUserId(int userId)
     qDebug() << "UserDashboard::setUserId called with userId:" << userId;
     if (m_userId != userId) {
         m_userId = userId;
+        m_inventoryModel->setUserId(userId);
+        m_salesModel->setUserId(userId);
         refresh();
     }
 }
@@ -30,28 +31,27 @@ void UserDashboard::refresh()
         return;
     }
 
+    m_inventoryModel->refresh();
+    m_salesModel->refresh();
+
     m_totalInventoryItems = m_inventoryModel->rowCount();
-    m_lowStockItems = calculateLowStockItems();
-    m_totalInventoryValue = calculateTotalInventoryValue();
+    m_lowStockItems = m_inventoryModel->lowStockItems();
+    m_totalInventoryValue = m_inventoryModel->totalCost();
     m_totalSales = m_salesModel->totalSales();
     m_totalRevenue = m_salesModel->totalRevenue();
 
-    if (m_totalRevenue > 0) {
-        m_profitMargin = (m_totalRevenue - m_totalInventoryValue) / m_totalRevenue * 100;
-    } else {
-        m_profitMargin = 0.0;
-    }
-
+    calculateProfitAndLoss();
     updateRecentActivities();
     updateLowStockItems();
-    updateMonthlyRevenue();
-    updateTopProducts();
+    fetchMonthlyProfitData();
 
     emit totalInventoryItemsChanged();
     emit lowStockItemsChanged();
     emit totalInventoryValueChanged();
     emit totalSalesChanged();
     emit totalRevenueChanged();
+    emit totalCostChanged();
+    emit grossProfitChanged();
     emit profitMarginChanged();
 
     qDebug() << "UserDashboard refreshed:"
@@ -60,49 +60,10 @@ void UserDashboard::refresh()
              << "Total Inventory Value:" << m_totalInventoryValue
              << "Total Sales:" << m_totalSales
              << "Total Revenue:" << m_totalRevenue
+             << "Total Cost:" << m_totalCost
+             << "Gross Profit:" << m_grossProfit
              << "Profit Margin:" << m_profitMargin;
 }
-
-int UserDashboard::calculateLowStockItems() const
-{
-    int lowStockCount = 0;
-    for (int i = 0; i < m_inventoryModel->rowCount(); ++i) {
-        QModelIndex index = m_inventoryModel->index(i, 0);
-        int quantity = m_inventoryModel->data(index, InventoryModel::QuantityRole).toInt();
-        int threshold = m_inventoryModel->data(index, InventoryModel::ThresholdRole).toInt();
-        if (quantity <= threshold) {
-            ++lowStockCount;
-        }
-    }
-    return lowStockCount;
-}
-
-double UserDashboard::calculateTotalInventoryValue() const
-{
-    double totalValue = 0.0;
-    for (int i = 0; i < m_inventoryModel->rowCount(); ++i) {
-        QModelIndex index = m_inventoryModel->index(i, 0);
-        int quantity = m_inventoryModel->data(index, InventoryModel::QuantityRole).toInt();
-        double price = m_inventoryModel->data(index, InventoryModel::PriceRole).toDouble();
-        totalValue += quantity * price;
-    }
-    return totalValue;
-}
-
-int UserDashboard::totalInventoryItems() const { return m_totalInventoryItems; }
-int UserDashboard::lowStockItems() const { return m_lowStockItems; }
-double UserDashboard::totalInventoryValue() const { return m_totalInventoryValue; }
-int UserDashboard::totalSales() const { return m_totalSales; }
-double UserDashboard::totalRevenue() const { return m_totalRevenue; }
-double UserDashboard::profitMargin() const { return m_profitMargin; }
-QVariantList UserDashboard::recentActivities() const { return m_recentActivities; }
-QVariantList UserDashboard::lowStockItemsList() const { return m_lowStockItemsList; }
-QStringList UserDashboard::monthlyRevenueLabels() const { return m_monthlyRevenueLabels; }
-QVariantList UserDashboard::monthlyRevenueData() const { return m_monthlyRevenueData; }
-double UserDashboard::maxMonthlyRevenue() const { return m_maxMonthlyRevenue; }
-QStringList UserDashboard::topProductNames() const { return m_topProductNames; }
-QVariantList UserDashboard::topProductValues() const { return m_topProductValues; }
-double UserDashboard::maxTopProductValue() const { return m_maxTopProductValue; }
 
 void UserDashboard::updateRecentActivities()
 {
@@ -143,94 +104,70 @@ void UserDashboard::updateRecentActivities()
 
 void UserDashboard::updateLowStockItems()
 {
-    m_lowStockItemsList.clear();
-    for (int i = 0; i < m_inventoryModel->rowCount(); ++i) {
-        QModelIndex index = m_inventoryModel->index(i, 0);
-        int quantity = m_inventoryModel->data(index, InventoryModel::QuantityRole).toInt();
-        int threshold = m_inventoryModel->data(index, InventoryModel::ThresholdRole).toInt();
-        if (quantity <= threshold) {
-            QVariantMap item;
-            item["name"] = m_inventoryModel->data(index, InventoryModel::NameRole).toString();
-            item["quantity"] = quantity;
-            item["threshold"] = threshold;
-            m_lowStockItemsList.append(item);
-        }
-    }
+    m_lowStockItemsList = m_inventoryModel->getLowStockItems();
     emit lowStockItemsListChanged();
     qDebug() << "Low stock items updated. Count:" << m_lowStockItemsList.size();
 }
 
-void UserDashboard::updateMonthlyRevenue()
+void UserDashboard::calculateProfitAndLoss()
+{
+    m_totalCost = m_inventoryModel->totalCost();
+    m_grossProfit = m_totalRevenue - m_totalCost;
+    
+    if (m_totalRevenue > 0) {
+        m_profitMargin = (m_grossProfit / m_totalRevenue) * 100;
+    } else {
+        m_profitMargin = 0;
+    }
+}
+
+void UserDashboard::fetchMonthlyProfitData()
 {
     QSqlQuery query(m_dbManager->database());
-    query.prepare("SELECT strftime('%Y-%m', sale_date) as month, SUM(total_price) as revenue "
-                  "FROM Sales "
-                  "WHERE user_id = :userId "
+    query.prepare("SELECT strftime('%Y-%m', s.sale_date) as month, "
+                  "SUM(s.total_price) as revenue, "
+                  "SUM(i.price * s.quantity) as cost "
+                  "FROM Sales s "
+                  "JOIN Inventory i ON s.item_id = i.id "
+                  "WHERE s.user_id = :userId "
                   "GROUP BY month "
                   "ORDER BY month DESC "
                   "LIMIT 6");
     query.bindValue(":userId", m_userId);
 
     if (!query.exec()) {
-        emit errorOccurred(tr("Failed to fetch monthly revenue: %1")
+        emit errorOccurred(tr("Failed to fetch monthly profit data: %1")
                                .arg(query.lastError().text()));
         return;
     }
 
-    m_monthlyRevenueLabels.clear();
-    m_monthlyRevenueData.clear();
-    m_maxMonthlyRevenue = 0.0;
-
+    m_monthlyProfitData.clear();
     while (query.next()) {
         QString month = query.value("month").toString();
         double revenue = query.value("revenue").toDouble();
+        double cost = query.value("cost").toDouble();
+        double profit = revenue - cost;
 
-        m_monthlyRevenueLabels.prepend(month);
-        m_monthlyRevenueData.prepend(revenue);
-
-        if (revenue > m_maxMonthlyRevenue) {
-            m_maxMonthlyRevenue = revenue;
-        }
+        QVariantMap dataPoint;
+        dataPoint["month"] = month;
+        dataPoint["revenue"] = revenue;
+        dataPoint["cost"] = cost;
+        dataPoint["profit"] = profit;
+        m_monthlyProfitData.prepend(dataPoint);
     }
 
-    emit monthlyRevenueDataChanged();
-    qDebug() << "Monthly revenue updated. Count:" << m_monthlyRevenueData.size();
+    emit monthlyProfitDataChanged();
+    qDebug() << "Monthly profit data updated. Count:" << m_monthlyProfitData.size();
 }
 
-void UserDashboard::updateTopProducts()
-{
-    QSqlQuery query(m_dbManager->database());
-    query.prepare("SELECT i.name, SUM(s.total_price) as revenue "
-                  "FROM Sales s "
-                  "JOIN Inventory i ON s.item_id = i.id "
-                  "WHERE s.user_id = :userId "
-                  "GROUP BY s.item_id "
-                  "ORDER BY revenue DESC "
-                  "LIMIT 5");
-    query.bindValue(":userId", m_userId);
-
-    if (!query.exec()) {
-        emit errorOccurred(tr("Failed to fetch top products: %1")
-                               .arg(query.lastError().text()));
-        return;
-    }
-
-    m_topProductNames.clear();
-    m_topProductValues.clear();
-    m_maxTopProductValue = 0.0;
-
-    while (query.next()) {
-        QString name = query.value("name").toString();
-        double revenue = query.value("revenue").toDouble();
-
-        m_topProductNames.append(name);
-        m_topProductValues.append(revenue);
-
-        if (revenue > m_maxTopProductValue) {
-            m_maxTopProductValue = revenue;
-        }
-    }
-
-    emit topProductsDataChanged();
-    qDebug() << "Top products updated. Count:" << m_topProductNames.size();
-}
+int UserDashboard::totalInventoryItems() const { return m_totalInventoryItems; }
+int UserDashboard::lowStockItems() const { return m_lowStockItems; }
+double UserDashboard::totalInventoryValue() const { return m_totalInventoryValue; }
+int UserDashboard::totalSales() const { return m_totalSales; }
+double UserDashboard::totalRevenue() const { return m_totalRevenue; }
+double UserDashboard::totalCost() const { return m_totalCost; }
+double UserDashboard::grossProfit() const { return m_grossProfit; }
+double UserDashboard::profitMargin() const { return m_profitMargin; }
+QVariantList UserDashboard::recentActivities() const { return m_recentActivities; }
+QVariantList UserDashboard::lowStockItemsList() const { return m_lowStockItemsList; }
+QVariantList UserDashboard::monthlyProfitData() const { return m_monthlyProfitData; }

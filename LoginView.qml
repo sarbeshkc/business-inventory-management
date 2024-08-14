@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.15
 
 Item {
     id: root
+    anchors.fill: parent
 
     Rectangle {
         anchors.fill: parent
@@ -12,53 +13,73 @@ Item {
 
     ColumnLayout {
         anchors.centerIn: parent
-        width: 300
+        width: 320
         spacing: 20
 
+        Image {
+            source: "qrc:/images/logo.png"  // Replace with your logo
+            Layout.alignment: Qt.AlignHCenter
+            width: 120
+            height: 120
+            fillMode: Image.PreserveAspectFit
+        }
+
         Text {
-            text: "Business Inventory Management System"
+            text: "Business Inventory\nManagement System"
             font.pixelSize: 24
             font.bold: true
             color: "white"
-            Layout.alignment: Qt.AlignHCenter
-            wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignHCenter
+            Layout.alignment: Qt.AlignHCenter
+            Layout.fillWidth: true
         }
 
-        TextField {
-            id: usernameField
-            placeholderText: "Username"
+        Rectangle {
             Layout.fillWidth: true
-            background: Rectangle {
-                color: "#2c3137"
-                radius: 5
+            height: 50
+            color: "#2c3137"
+            radius: 25
+
+            TextField {
+                id: usernameField
+                anchors.fill: parent
+                anchors.margins: 5
+                placeholderText: "Username"
+                color: "white"
+                background: Item {}
+                leftPadding: 15
             }
-            color: "white"
-            placeholderTextColor: "#6c757d"
         }
 
-        TextField {
-            id: passwordField
-            placeholderText: "Password"
-            echoMode: TextInput.Password
+        Rectangle {
             Layout.fillWidth: true
-            background: Rectangle {
-                color: "#2c3137"
-                radius: 5
+            height: 50
+            color: "#2c3137"
+            radius: 25
+
+            TextField {
+                id: passwordField
+                anchors.fill: parent
+                anchors.margins: 5
+                placeholderText: "Password"
+                echoMode: TextInput.Password
+                color: "white"
+                background: Item {}
+                leftPadding: 15
             }
-            color: "white"
-            placeholderTextColor: "#6c757d"
         }
 
         Button {
             text: "Login"
             Layout.fillWidth: true
+            implicitHeight: 50
             background: Rectangle {
-                color: "#3050c0"
-                radius: 5
+                color: parent.pressed ? "#1e88e5" : "#2196f3"
+                radius: 25
             }
             contentItem: Text {
                 text: parent.text
+                font.pixelSize: 16
                 color: "white"
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
@@ -75,17 +96,20 @@ Item {
 
         Text {
             text: "Don't have an account? Sign up"
-            color: "#3050c0"
+            color: "#64b5f6"
+            font.pixelSize: 14
             Layout.alignment: Qt.AlignHCenter
             MouseArea {
                 anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
                 onClicked: stackView.push("SignupView.qml")
             }
         }
 
         Text {
             id: errorText
-            color: "#dc3545"
+            color: "#e57373"
+            font.pixelSize: 14
             Layout.alignment: Qt.AlignHCenter
             visible: false
             wrapMode: Text.Wrap

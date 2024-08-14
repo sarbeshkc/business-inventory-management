@@ -4,132 +4,158 @@ import QtQuick.Layouts 1.15
 
 Item {
     id: root
+    anchors.fill: parent
+
+    Rectangle {
+        anchors.fill: parent
+        color: "#1e2329"
+    }
 
     ColumnLayout {
-        anchors.fill: parent
-        anchors.margins: 20
+        anchors.centerIn: parent
+        width: 320
         spacing: 20
 
-        RowLayout {
+        Text {
+            text: "Create an Account"
+            font.pixelSize: 28
+            font.bold: true
+            color: "white"
+            horizontalAlignment: Text.AlignHCenter
+            Layout.alignment: Qt.AlignHCenter
             Layout.fillWidth: true
-            spacing: 10
+        }
 
-            Text {
-                text: "Sales Management"
-                font.pixelSize: 24
-                font.bold: true
-                color: "white"
-            }
-
-            Item { Layout.fillWidth: true }
+        Rectangle {
+            Layout.fillWidth: true
+            height: 50
+            color: "#2c3137"
+            radius: 25
 
             TextField {
-                id: searchField
-                placeholderText: "Search sales..."
-                Layout.preferredWidth: 200
-                onTextChanged: salesModel.searchSales(text)
-            }
-
-            Button {
-                text: "Add Sale"
-                onClicked: addSaleDialog.open()
+                id: usernameField
+                anchors.fill: parent
+                anchors.margins: 5
+                placeholderText: "Username"
+                color: "white"
+                background: Item {}
+                leftPadding: 15
             }
         }
 
-        ListView {
-            id: salesListView
+        Rectangle {
             Layout.fillWidth: true
-            Layout.fillHeight: true
-            clip: true
-            model: salesModel
-            delegate: Rectangle {
-                width: salesListView.width
-                height: 60
-                color: index % 2 === 0 ? "#2c3137" : "#252a31"
+            height: 50
+            color: "#2c3137"
+            radius: 25
 
-                RowLayout {
-                    anchors.fill: parent
-                    anchors.margins: 10
-                    spacing: 10
+            TextField {
+                id: emailField
+                anchors.fill: parent
+                anchors.margins: 5
+                placeholderText: "Email"
+                color: "white"
+                background: Item {}
+                leftPadding: 15
+            }
+        }
 
-                    Text { text: Qt.formatDateTime(model.saleDate, "yyyy-MM-dd hh:mm"); color: "#a0a0a0"; font.pixelSize: 14; Layout.preferredWidth: 150 }
-                    Text { text: model.itemName || ""; color: "white"; font.pixelSize: 16; Layout.fillWidth: true }
-                    Text { text: model.quantity !== undefined ? model.quantity : ""; color: "white"; font.pixelSize: 16; Layout.preferredWidth: 80 }
-                    Text { text: model.price !== undefined ? "$" + model.price.toFixed(2) : ""; color: "#4CAF50"; font.pixelSize: 16; Layout.preferredWidth: 100 }
-                    Text { text: model.totalPrice !== undefined ? "$" + model.totalPrice.toFixed(2) : ""; color: "#4CAF50"; font.bold: true; font.pixelSize: 16; Layout.preferredWidth: 120 }
+        Rectangle {
+            Layout.fillWidth: true
+            height: 50
+            color: "#2c3137"
+            radius: 25
+
+            TextField {
+                id: passwordField
+                anchors.fill: parent
+                anchors.margins: 5
+                placeholderText: "Password"
+                echoMode: TextInput.Password
+                color: "white"
+                background: Item {}
+                leftPadding: 15
+            }
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            height: 50
+            color: "#2c3137"
+            radius: 25
+
+            TextField {
+                id: confirmPasswordField
+                anchors.fill: parent
+                anchors.margins: 5
+                placeholderText: "Confirm Password"
+                echoMode: TextInput.Password
+                color: "white"
+                background: Item {}
+                leftPadding: 15
+            }
+        }
+
+        Button {
+            text: "Sign Up"
+            Layout.fillWidth: true
+            implicitHeight: 50
+            background: Rectangle {
+                color: parent.pressed ? "#43a047" : "#4caf50"
+                radius: 25
+            }
+            contentItem: Text {
+                text: parent.text
+                font.pixelSize: 16
+                color: "white"
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
+            onClicked: {
+                if (passwordField.text === confirmPasswordField.text) {
+                    if (userModel.signup(usernameField.text, passwordField.text, emailField.text)) {
+                        console.log("Signup successful")
+                    } else {
+                        console.log("Signup failed")
+                    }
+                } else {
+                    errorText.text = "Passwords do not match"
+                    errorText.visible = true
                 }
             }
+        }
+
+        Text {
+            text: "Already have an account? Log in"
+            color: "#64b5f6"
+            font.pixelSize: 14
+            Layout.alignment: Qt.AlignHCenter
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: stackView.pop()
+            }
+        }
+
+        Text {
+            id: errorText
+            color: "#e57373"
+            font.pixelSize: 14
+            Layout.alignment: Qt.AlignHCenter
+            visible: false
+            wrapMode: Text.Wrap
         }
     }
 
-    Dialog {
-        id: addSaleDialog
-        title: "Add New Sale"
-        modal: true
-
-        x: (parent.width - width) / 2
-        y: (parent.height - height) / 2
-        width: 400
-
-        contentItem: ColumnLayout {
-            spacing: 20
-
-            GridLayout {
-                columns: 2
-                columnSpacing: 10
-                rowSpacing: 10
-
-                Label { text: "Item:"; color: "white" }
-                ComboBox {
-                    id: itemComboBox
-                    model: inventoryModel
-                    textRole: "name"
-                    valueRole: "id"
-                    Layout.fillWidth: true
-                }
-
-                Label { text: "Quantity:"; color: "white" }
-                SpinBox {
-                    id: quantityField
-                    from: 1
-                    to: 1000000
-                    editable: true
-                }
-
-                Label { text: "Price:"; color: "white" }
-                TextField {
-                    id: priceField
-                    Layout.fillWidth: true
-                    placeholderText: "Enter price"
-                    validator: DoubleValidator { bottom: 0; decimals: 2 }
-                }
-            }
-
-            RowLayout {
-                Layout.alignment: Qt.AlignRight
-                spacing: 10
-
-                Button {
-                    text: "Cancel"
-                    onClicked: addSaleDialog.close()
-                }
-
-                Button {
-                    text: "Add Sale"
-                    enabled: itemComboBox.currentIndex !== -1 && priceField.text !== ""
-                    onClicked: {
-                        salesModel.addSale(
-                            itemComboBox.currentValue,
-                            quantityField.value,
-                            parseFloat(priceField.text)
-                        )
-                        addSaleDialog.close()
-                        itemComboBox.currentIndex = -1
-                        quantityField.value = 1
-                        priceField.text = ""
-                    }
-                }
-            }
+    Connections {
+        target: userModel
+        function onErrorOccurred(error) {
+            errorText.text = error
+            errorText.visible = true
+        }
+        function onLoginSuccessful() {
+            errorText.visible = false
+            stackView.replace("DashboardView.qml")
         }
     }
 }

@@ -40,32 +40,16 @@ constexpr auto qt_meta_stringdata_CLASSSalesModelENDCLASS = QtMocHelpers::string
     "",
     "error",
     "totalSalesChanged",
-    "revenueThisMonthChanged",
     "totalRevenueChanged",
-    "maxMonthlySalesChanged",
-    "monthlySalesDataChanged",
-    "topProductsChanged",
     "addSale",
     "itemId",
     "quantity",
     "price",
-    "category",
-    "supplierName",
-    "supplierAddress",
     "searchSales",
     "searchText",
-    "sortSales",
-    "column",
-    "Qt::SortOrder",
-    "order",
     "refresh",
-    "refreshAnalytics",
     "totalSales",
-    "revenueThisMonth",
-    "totalRevenue",
-    "maxMonthlySales",
-    "monthlySalesData",
-    "topProducts"
+    "totalRevenue"
 );
 #else  // !QT_MOC_HAS_STRINGDATA
 #error "qtmochelpers.h not found or too old."
@@ -78,52 +62,36 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSSalesModelENDCLASS[] = {
       12,       // revision
        0,       // classname
        0,    0, // classinfo
-      12,   14, // methods
-       6,  118, // properties
+       6,   14, // methods
+       2,   66, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       7,       // signalCount
+       3,       // signalCount
 
  // signals: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    1,   86,    2, 0x06,    7 /* Public */,
-       4,    0,   89,    2, 0x06,    9 /* Public */,
-       5,    0,   90,    2, 0x06,   10 /* Public */,
-       6,    0,   91,    2, 0x06,   11 /* Public */,
-       7,    0,   92,    2, 0x06,   12 /* Public */,
-       8,    0,   93,    2, 0x06,   13 /* Public */,
-       9,    0,   94,    2, 0x06,   14 /* Public */,
+       1,    1,   50,    2, 0x06,    3 /* Public */,
+       4,    0,   53,    2, 0x06,    5 /* Public */,
+       5,    0,   54,    2, 0x06,    6 /* Public */,
 
  // methods: name, argc, parameters, tag, flags, initial metatype offsets
-      10,    6,   95,    2, 0x02,   15 /* Public */,
-      17,    1,  108,    2, 0x02,   22 /* Public */,
-      19,    2,  111,    2, 0x02,   24 /* Public */,
-      23,    0,  116,    2, 0x02,   27 /* Public */,
-      24,    0,  117,    2, 0x02,   28 /* Public */,
+       6,    3,   55,    2, 0x02,    7 /* Public */,
+      10,    1,   62,    2, 0x02,   11 /* Public */,
+      12,    0,   65,    2, 0x02,   13 /* Public */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::QString,    3,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void,
-    QMetaType::Void,
-    QMetaType::Void,
-    QMetaType::Void,
 
  // methods: parameters
-    QMetaType::Bool, QMetaType::Int, QMetaType::Int, QMetaType::Double, QMetaType::QString, QMetaType::QString, QMetaType::QString,   11,   12,   13,   14,   15,   16,
-    QMetaType::Void, QMetaType::QString,   18,
-    QMetaType::Void, QMetaType::QString, 0x80000000 | 21,   20,   22,
-    QMetaType::Void,
+    QMetaType::Bool, QMetaType::Int, QMetaType::Int, QMetaType::Double,    7,    8,    9,
+    QMetaType::Void, QMetaType::QString,   11,
     QMetaType::Void,
 
  // properties: name, type, flags
-      25, QMetaType::Int, 0x00015001, uint(1), 0,
-      26, QMetaType::Double, 0x00015001, uint(2), 0,
-      27, QMetaType::Double, 0x00015001, uint(3), 0,
-      28, QMetaType::Double, 0x00015001, uint(4), 0,
-      29, QMetaType::QVariantList, 0x00015001, uint(5), 0,
-      30, QMetaType::QVariantList, 0x00015001, uint(6), 0,
+      13, QMetaType::Int, 0x00015001, uint(1), 0,
+      14, QMetaType::Double, 0x00015001, uint(2), 0,
 
        0        // eod
 };
@@ -137,16 +105,8 @@ Q_CONSTINIT const QMetaObject SalesModel::staticMetaObject = { {
     qt_incomplete_metaTypeArray<qt_meta_stringdata_CLASSSalesModelENDCLASS_t,
         // property 'totalSales'
         QtPrivate::TypeAndForceComplete<int, std::true_type>,
-        // property 'revenueThisMonth'
-        QtPrivate::TypeAndForceComplete<double, std::true_type>,
         // property 'totalRevenue'
         QtPrivate::TypeAndForceComplete<double, std::true_type>,
-        // property 'maxMonthlySales'
-        QtPrivate::TypeAndForceComplete<double, std::true_type>,
-        // property 'monthlySalesData'
-        QtPrivate::TypeAndForceComplete<QVariantList, std::true_type>,
-        // property 'topProducts'
-        QtPrivate::TypeAndForceComplete<QVariantList, std::true_type>,
         // Q_OBJECT / Q_GADGET
         QtPrivate::TypeAndForceComplete<SalesModel, std::true_type>,
         // method 'errorOccurred'
@@ -154,34 +114,17 @@ Q_CONSTINIT const QMetaObject SalesModel::staticMetaObject = { {
         QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
         // method 'totalSalesChanged'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        // method 'revenueThisMonthChanged'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'totalRevenueChanged'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        // method 'maxMonthlySalesChanged'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        // method 'monthlySalesDataChanged'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        // method 'topProductsChanged'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'addSale'
         QtPrivate::TypeAndForceComplete<bool, std::false_type>,
         QtPrivate::TypeAndForceComplete<int, std::false_type>,
         QtPrivate::TypeAndForceComplete<int, std::false_type>,
         QtPrivate::TypeAndForceComplete<double, std::false_type>,
-        QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
-        QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
-        QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
         // method 'searchSales'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
-        // method 'sortSales'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
-        QtPrivate::TypeAndForceComplete<Qt::SortOrder, std::false_type>,
         // method 'refresh'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        // method 'refreshAnalytics'
         QtPrivate::TypeAndForceComplete<void, std::false_type>
     >,
     nullptr
@@ -195,17 +138,11 @@ void SalesModel::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         switch (_id) {
         case 0: _t->errorOccurred((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
         case 1: _t->totalSalesChanged(); break;
-        case 2: _t->revenueThisMonthChanged(); break;
-        case 3: _t->totalRevenueChanged(); break;
-        case 4: _t->maxMonthlySalesChanged(); break;
-        case 5: _t->monthlySalesDataChanged(); break;
-        case 6: _t->topProductsChanged(); break;
-        case 7: { bool _r = _t->addSale((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2])),(*reinterpret_cast< std::add_pointer_t<double>>(_a[3])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[4])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[5])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[6])));
+        case 2: _t->totalRevenueChanged(); break;
+        case 3: { bool _r = _t->addSale((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2])),(*reinterpret_cast< std::add_pointer_t<double>>(_a[3])));
             if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = std::move(_r); }  break;
-        case 8: _t->searchSales((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
-        case 9: _t->sortSales((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<Qt::SortOrder>>(_a[2]))); break;
-        case 10: _t->refresh(); break;
-        case 11: _t->refreshAnalytics(); break;
+        case 4: _t->searchSales((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
+        case 5: _t->refresh(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -226,36 +163,8 @@ void SalesModel::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         }
         {
             using _t = void (SalesModel::*)();
-            if (_t _q_method = &SalesModel::revenueThisMonthChanged; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
-                *result = 2;
-                return;
-            }
-        }
-        {
-            using _t = void (SalesModel::*)();
             if (_t _q_method = &SalesModel::totalRevenueChanged; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
-                *result = 3;
-                return;
-            }
-        }
-        {
-            using _t = void (SalesModel::*)();
-            if (_t _q_method = &SalesModel::maxMonthlySalesChanged; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
-                *result = 4;
-                return;
-            }
-        }
-        {
-            using _t = void (SalesModel::*)();
-            if (_t _q_method = &SalesModel::monthlySalesDataChanged; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
-                *result = 5;
-                return;
-            }
-        }
-        {
-            using _t = void (SalesModel::*)();
-            if (_t _q_method = &SalesModel::topProductsChanged; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
-                *result = 6;
+                *result = 2;
                 return;
             }
         }
@@ -265,11 +174,7 @@ void SalesModel::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         void *_v = _a[0];
         switch (_id) {
         case 0: *reinterpret_cast< int*>(_v) = _t->totalSales(); break;
-        case 1: *reinterpret_cast< double*>(_v) = _t->revenueThisMonth(); break;
-        case 2: *reinterpret_cast< double*>(_v) = _t->totalRevenue(); break;
-        case 3: *reinterpret_cast< double*>(_v) = _t->maxMonthlySales(); break;
-        case 4: *reinterpret_cast< QVariantList*>(_v) = _t->monthlySalesData(); break;
-        case 5: *reinterpret_cast< QVariantList*>(_v) = _t->topProducts(); break;
+        case 1: *reinterpret_cast< double*>(_v) = _t->totalRevenue(); break;
         default: break;
         }
     } else if (_c == QMetaObject::WriteProperty) {
@@ -297,18 +202,18 @@ int SalesModel::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 12)
+        if (_id < 6)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 12;
+        _id -= 6;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 12)
+        if (_id < 6)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 12;
+        _id -= 6;
     }else if (_c == QMetaObject::ReadProperty || _c == QMetaObject::WriteProperty
             || _c == QMetaObject::ResetProperty || _c == QMetaObject::BindableProperty
             || _c == QMetaObject::RegisterPropertyMetaType) {
         qt_static_metacall(this, _c, _id, _a);
-        _id -= 6;
+        _id -= 2;
     }
     return _id;
 }
@@ -327,32 +232,8 @@ void SalesModel::totalSalesChanged()
 }
 
 // SIGNAL 2
-void SalesModel::revenueThisMonthChanged()
-{
-    QMetaObject::activate(this, &staticMetaObject, 2, nullptr);
-}
-
-// SIGNAL 3
 void SalesModel::totalRevenueChanged()
 {
-    QMetaObject::activate(this, &staticMetaObject, 3, nullptr);
-}
-
-// SIGNAL 4
-void SalesModel::maxMonthlySalesChanged()
-{
-    QMetaObject::activate(this, &staticMetaObject, 4, nullptr);
-}
-
-// SIGNAL 5
-void SalesModel::monthlySalesDataChanged()
-{
-    QMetaObject::activate(this, &staticMetaObject, 5, nullptr);
-}
-
-// SIGNAL 6
-void SalesModel::topProductsChanged()
-{
-    QMetaObject::activate(this, &staticMetaObject, 6, nullptr);
+    QMetaObject::activate(this, &staticMetaObject, 2, nullptr);
 }
 QT_WARNING_POP
