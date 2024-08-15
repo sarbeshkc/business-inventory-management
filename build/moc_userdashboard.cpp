@@ -50,8 +50,11 @@ constexpr auto qt_meta_stringdata_CLASSUserDashboardENDCLASS = QtMocHelpers::str
     "recentActivitiesChanged",
     "lowStockItemsListChanged",
     "monthlyProfitDataChanged",
-    "setUserId",
-    "userId",
+    "expiringItemsChanged",
+    "itemNearExpiry",
+    "itemId",
+    "itemName",
+    "expiryDate",
     "refresh",
     "totalInventoryItems",
     "lowStockItems",
@@ -63,7 +66,8 @@ constexpr auto qt_meta_stringdata_CLASSUserDashboardENDCLASS = QtMocHelpers::str
     "profitMargin",
     "recentActivities",
     "lowStockItemsList",
-    "monthlyProfitData"
+    "monthlyProfitData",
+    "expiringItems"
 );
 #else  // !QT_MOC_HAS_STRINGDATA
 #error "qtmochelpers.h not found or too old."
@@ -76,30 +80,31 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSUserDashboardENDCLASS[] = {
       12,       // revision
        0,       // classname
        0,    0, // classinfo
-      14,   14, // methods
-      11,  116, // properties
+      15,   14, // methods
+      12,  127, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-      12,       // signalCount
+      14,       // signalCount
 
  // signals: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    1,   98,    2, 0x06,   12 /* Public */,
-       4,    0,  101,    2, 0x06,   14 /* Public */,
-       5,    0,  102,    2, 0x06,   15 /* Public */,
-       6,    0,  103,    2, 0x06,   16 /* Public */,
-       7,    0,  104,    2, 0x06,   17 /* Public */,
-       8,    0,  105,    2, 0x06,   18 /* Public */,
-       9,    0,  106,    2, 0x06,   19 /* Public */,
-      10,    0,  107,    2, 0x06,   20 /* Public */,
-      11,    0,  108,    2, 0x06,   21 /* Public */,
-      12,    0,  109,    2, 0x06,   22 /* Public */,
-      13,    0,  110,    2, 0x06,   23 /* Public */,
-      14,    0,  111,    2, 0x06,   24 /* Public */,
+       1,    1,  104,    2, 0x06,   13 /* Public */,
+       4,    0,  107,    2, 0x06,   15 /* Public */,
+       5,    0,  108,    2, 0x06,   16 /* Public */,
+       6,    0,  109,    2, 0x06,   17 /* Public */,
+       7,    0,  110,    2, 0x06,   18 /* Public */,
+       8,    0,  111,    2, 0x06,   19 /* Public */,
+       9,    0,  112,    2, 0x06,   20 /* Public */,
+      10,    0,  113,    2, 0x06,   21 /* Public */,
+      11,    0,  114,    2, 0x06,   22 /* Public */,
+      12,    0,  115,    2, 0x06,   23 /* Public */,
+      13,    0,  116,    2, 0x06,   24 /* Public */,
+      14,    0,  117,    2, 0x06,   25 /* Public */,
+      15,    0,  118,    2, 0x06,   26 /* Public */,
+      16,    3,  119,    2, 0x06,   27 /* Public */,
 
  // methods: name, argc, parameters, tag, flags, initial metatype offsets
-      15,    1,  112,    2, 0x02,   25 /* Public */,
-      17,    0,  115,    2, 0x02,   27 /* Public */,
+      20,    0,  126,    2, 0x02,   31 /* Public */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::QString,    3,
@@ -114,23 +119,25 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSUserDashboardENDCLASS[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::Int, QMetaType::QString, QMetaType::QDate,   17,   18,   19,
 
  // methods: parameters
-    QMetaType::Void, QMetaType::Int,   16,
     QMetaType::Void,
 
  // properties: name, type, flags
-      18, QMetaType::Int, 0x00015001, uint(1), 0,
-      19, QMetaType::Int, 0x00015001, uint(2), 0,
-      20, QMetaType::Double, 0x00015001, uint(3), 0,
-      21, QMetaType::Int, 0x00015001, uint(4), 0,
-      22, QMetaType::Double, 0x00015001, uint(5), 0,
-      23, QMetaType::Double, 0x00015001, uint(6), 0,
-      24, QMetaType::Double, 0x00015001, uint(7), 0,
-      25, QMetaType::Double, 0x00015001, uint(8), 0,
-      26, QMetaType::QVariantList, 0x00015001, uint(9), 0,
-      27, QMetaType::QVariantList, 0x00015001, uint(10), 0,
-      28, QMetaType::QVariantList, 0x00015001, uint(11), 0,
+      21, QMetaType::Int, 0x00015001, uint(1), 0,
+      22, QMetaType::Int, 0x00015001, uint(2), 0,
+      23, QMetaType::Double, 0x00015001, uint(3), 0,
+      24, QMetaType::Int, 0x00015001, uint(4), 0,
+      25, QMetaType::Double, 0x00015001, uint(5), 0,
+      26, QMetaType::Double, 0x00015001, uint(6), 0,
+      27, QMetaType::Double, 0x00015001, uint(7), 0,
+      28, QMetaType::Double, 0x00015001, uint(8), 0,
+      29, QMetaType::QVariantList, 0x00015001, uint(9), 0,
+      30, QMetaType::QVariantList, 0x00015001, uint(10), 0,
+      31, QMetaType::QVariantList, 0x00015001, uint(11), 0,
+      32, QMetaType::Int, 0x00015001, uint(12), 0,
 
        0        // eod
 };
@@ -164,6 +171,8 @@ Q_CONSTINIT const QMetaObject UserDashboard::staticMetaObject = { {
         QtPrivate::TypeAndForceComplete<QVariantList, std::true_type>,
         // property 'monthlyProfitData'
         QtPrivate::TypeAndForceComplete<QVariantList, std::true_type>,
+        // property 'expiringItems'
+        QtPrivate::TypeAndForceComplete<int, std::true_type>,
         // Q_OBJECT / Q_GADGET
         QtPrivate::TypeAndForceComplete<UserDashboard, std::true_type>,
         // method 'errorOccurred'
@@ -191,9 +200,13 @@ Q_CONSTINIT const QMetaObject UserDashboard::staticMetaObject = { {
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'monthlyProfitDataChanged'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        // method 'setUserId'
+        // method 'expiringItemsChanged'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'itemNearExpiry'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         QtPrivate::TypeAndForceComplete<int, std::false_type>,
+        QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
+        QtPrivate::TypeAndForceComplete<const QDate &, std::false_type>,
         // method 'refresh'
         QtPrivate::TypeAndForceComplete<void, std::false_type>
     >,
@@ -218,8 +231,9 @@ void UserDashboard::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
         case 9: _t->recentActivitiesChanged(); break;
         case 10: _t->lowStockItemsListChanged(); break;
         case 11: _t->monthlyProfitDataChanged(); break;
-        case 12: _t->setUserId((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
-        case 13: _t->refresh(); break;
+        case 12: _t->expiringItemsChanged(); break;
+        case 13: _t->itemNearExpiry((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2])),(*reinterpret_cast< std::add_pointer_t<QDate>>(_a[3]))); break;
+        case 14: _t->refresh(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -308,6 +322,20 @@ void UserDashboard::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
                 return;
             }
         }
+        {
+            using _t = void (UserDashboard::*)();
+            if (_t _q_method = &UserDashboard::expiringItemsChanged; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
+                *result = 12;
+                return;
+            }
+        }
+        {
+            using _t = void (UserDashboard::*)(int , const QString & , const QDate & );
+            if (_t _q_method = &UserDashboard::itemNearExpiry; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
+                *result = 13;
+                return;
+            }
+        }
     } else if (_c == QMetaObject::ReadProperty) {
         auto *_t = static_cast<UserDashboard *>(_o);
         (void)_t;
@@ -324,6 +352,7 @@ void UserDashboard::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
         case 8: *reinterpret_cast< QVariantList*>(_v) = _t->recentActivities(); break;
         case 9: *reinterpret_cast< QVariantList*>(_v) = _t->lowStockItemsList(); break;
         case 10: *reinterpret_cast< QVariantList*>(_v) = _t->monthlyProfitData(); break;
+        case 11: *reinterpret_cast< int*>(_v) = _t->expiringItems(); break;
         default: break;
         }
     } else if (_c == QMetaObject::WriteProperty) {
@@ -351,18 +380,18 @@ int UserDashboard::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 14)
+        if (_id < 15)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 14;
+        _id -= 15;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 14)
+        if (_id < 15)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 14;
+        _id -= 15;
     }else if (_c == QMetaObject::ReadProperty || _c == QMetaObject::WriteProperty
             || _c == QMetaObject::ResetProperty || _c == QMetaObject::BindableProperty
             || _c == QMetaObject::RegisterPropertyMetaType) {
         qt_static_metacall(this, _c, _id, _a);
-        _id -= 11;
+        _id -= 12;
     }
     return _id;
 }
@@ -438,5 +467,18 @@ void UserDashboard::lowStockItemsListChanged()
 void UserDashboard::monthlyProfitDataChanged()
 {
     QMetaObject::activate(this, &staticMetaObject, 11, nullptr);
+}
+
+// SIGNAL 12
+void UserDashboard::expiringItemsChanged()
+{
+    QMetaObject::activate(this, &staticMetaObject, 12, nullptr);
+}
+
+// SIGNAL 13
+void UserDashboard::itemNearExpiry(int _t1, const QString & _t2, const QDate & _t3)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t2))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t3))) };
+    QMetaObject::activate(this, &staticMetaObject, 13, _a);
 }
 QT_WARNING_POP

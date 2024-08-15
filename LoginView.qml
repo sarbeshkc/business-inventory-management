@@ -17,15 +17,15 @@ Item {
         spacing: 20
 
         Image {
-            source: "qrc:/images/logo.png"  // Replace with your logo
+            source: "/home/satvara/Downloads/BIMSLOGO(1).png"  // Replace with your logo
             Layout.alignment: Qt.AlignHCenter
-            width: 120
-            height: 120
+            width: 50
+            height: 50
             fillMode: Image.PreserveAspectFit
         }
 
         Text {
-            text: "Business Inventory\nManagement System"
+            text: "Business Inventory Management System"
             font.pixelSize: 24
             font.bold: true
             color: "white"

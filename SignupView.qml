@@ -16,6 +16,15 @@ Item {
         width: 320
         spacing: 20
 
+
+        Image {
+            source: "/home/satvara/Downloads/BIMSLOGO(1).png"  // Replace with your logo
+            Layout.alignment: Qt.AlignHCenter
+            width: 50
+            height: 50
+            fillMode: Image.PreserveAspectFit
+        }
+
         Text {
             text: "Create an Account"
             font.pixelSize: 28

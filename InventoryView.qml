@@ -57,7 +57,33 @@ Item {
                     Text { text: model.quantity !== undefined ? model.quantity : ""; color: "white"; font.pixelSize: 16; Layout.preferredWidth: 80 }
                     Text { text: model.price !== undefined ? "$" + model.price.toFixed(2) : ""; color: "#4CAF50"; font.pixelSize: 16; Layout.preferredWidth: 100 }
                     Text { text: model.supplierName || ""; color: "#a0a0a0"; font.pixelSize: 14; Layout.preferredWidth: 150 }
+                    Text { 
+                        text: model.expiryDate ? Qt.formatDate(model.expiryDate, "yyyy-MM-dd") : "N/A"
+                        color: {
+                            if (model.expiryDate) {
+                                var daysUntilExpiry = Math.ceil((model.expiryDate - new Date()) / (1000 * 60 * 60 * 24));
+                                return daysUntilExpiry <= 30 ? "#FF9800" : "#a0a0a0";
+                            }
+                            return "#a0a0a0";
+                        }
+                        font.pixelSize: 14
+                        Layout.preferredWidth: 100
+                    }
 
+                    Button {
+                        text: "Edit"
+                        onClicked: {
+                            editItemDialog.itemId = model.id
+                            editNameField.text = model.name
+                            editCategoryField.text = model.category
+                            editQuantityField.value = model.quantity
+                            editPriceField.text = model.price.toFixed(2)
+                            editSupplierNameField.text = model.supplierName
+                            editSupplierAddressField.text = model.supplierAddress
+                            editExpiryDateField.text = model.expiryDate ? Qt.formatDate(model.expiryDate, "yyyy-MM-dd") : ""
+                            editItemDialog.open()
+                        }
+                    }
 
                     Button {
                         text: "Delete"
@@ -144,6 +170,14 @@ Item {
                     Layout.fillWidth: true
                     placeholderText: "Enter supplier address"
                 }
+
+                Label { text: "Expiry Date:"; color: "white" }
+                TextField {
+                    id: expiryDateField
+                    Layout.fillWidth: true
+                    placeholderText: "YYYY-MM-DD"
+                    inputMask: "9999-99-99"
+                }
             }
 
             RowLayout {
@@ -165,7 +199,8 @@ Item {
                             quantityField.value,
                             parseFloat(priceField.text),
                             supplierNameField.text,
-                            supplierAddressField.text
+                            supplierAddressField.text,
+                            new Date(expiryDateField.text)
                         )
                         addItemDialog.close()
                         nameField.text = ""
@@ -174,6 +209,7 @@ Item {
                         priceField.text = ""
                         supplierNameField.text = ""
                         supplierAddressField.text = ""
+                        expiryDateField.text = ""
                     }
                 }
             }
@@ -237,6 +273,14 @@ Item {
                     id: editSupplierAddressField
                     Layout.fillWidth: true
                 }
+
+                Label { text: "Expiry Date:"; color: "white" }
+                TextField {
+                    id: editExpiryDateField
+                    Layout.fillWidth: true
+                    placeholderText: "YYYY-MM-DD"
+                    inputMask: "9999-99-99"
+                }
             }
 
             RowLayout {
@@ -259,7 +303,8 @@ Item {
                             editQuantityField.value,
                             parseFloat(editPriceField.text),
                             editSupplierNameField.text,
-                            editSupplierAddressField.text
+                            editSupplierAddressField.text,
+                            new Date(editExpiryDateField.text)
                         )
                         editItemDialog.close()
                     }

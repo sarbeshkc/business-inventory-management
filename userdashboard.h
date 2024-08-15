@@ -21,11 +21,12 @@ class UserDashboard : public QObject
     Q_PROPERTY(QVariantList recentActivities READ recentActivities NOTIFY recentActivitiesChanged)
     Q_PROPERTY(QVariantList lowStockItemsList READ lowStockItemsList NOTIFY lowStockItemsListChanged)
     Q_PROPERTY(QVariantList monthlyProfitData READ monthlyProfitData NOTIFY monthlyProfitDataChanged)
+    Q_PROPERTY(int expiringItems READ expiringItems NOTIFY expiringItemsChanged)
 
 public:
     explicit UserDashboard(DatabaseManager *dbManager, InventoryModel *inventoryModel, SalesModel *salesModel, QObject *parent = nullptr);
 
-    Q_INVOKABLE void setUserId(int userId);
+    void setUserId(int userId);
     Q_INVOKABLE void refresh();
 
     int totalInventoryItems() const;
@@ -39,6 +40,7 @@ public:
     QVariantList recentActivities() const;
     QVariantList lowStockItemsList() const;
     QVariantList monthlyProfitData() const;
+    int expiringItems() const;
 
 signals:
     void errorOccurred(const QString &error);
@@ -53,13 +55,10 @@ signals:
     void recentActivitiesChanged();
     void lowStockItemsListChanged();
     void monthlyProfitDataChanged();
+    void expiringItemsChanged();
+    void itemNearExpiry(int itemId, const QString &itemName, const QDate &expiryDate);
 
 private:
-    void updateRecentActivities();
-    void updateLowStockItems();
-    void calculateProfitAndLoss();
-    void fetchMonthlyProfitData();
-
     DatabaseManager *m_dbManager;
     InventoryModel *m_inventoryModel;
     SalesModel *m_salesModel;
@@ -75,6 +74,13 @@ private:
     QVariantList m_recentActivities;
     QVariantList m_lowStockItemsList;
     QVariantList m_monthlyProfitData;
+    int m_expiringItems;
+
+    void calculateProfitAndLoss();
+    void updateRecentActivities();
+    void updateLowStockItems();
+    void fetchMonthlyProfitData();
+    void checkExpiringItems();
 };
 
 #endif // USERDASHBOARD_H

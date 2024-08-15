@@ -1,4 +1,3 @@
-import QtQuick 2.1
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
@@ -149,5 +148,47 @@ ApplicationWindow {
         function onErrorOccurred(error) {
             console.log("Error occurred:", error)
         }
+    }
+
+    // Handle expiry notifications
+    Connections {
+        target: userDashboard
+        function onItemNearExpiry(itemId, itemName, expiryDate) {
+            expiryNotificationDialog.itemName = itemName
+            expiryNotificationDialog.expiryDate = expiryDate
+            expiryNotificationDialog.open()
+        }
+    }
+
+    Dialog {
+        id: expiryNotificationDialog
+        title: "Item Nearing Expiry"
+        modal: true
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+
+        property string itemName: ""
+        property date expiryDate
+
+        contentItem: ColumnLayout {
+            Text {
+                text: "The following item is nearing its expiry date:"
+                color: "white"
+                font.pixelSize: 16
+            }
+            Text {
+                text: expiryNotificationDialog.itemName
+                color: "#FF9800"
+                font.pixelSize: 18
+                font.bold: true
+            }
+            Text {
+                text: "Expiry Date: " + Qt.formatDate(expiryNotificationDialog.expiryDate, "yyyy-MM-dd")
+                color: "white"
+                font.pixelSize: 16
+            }
+        }
+
+        standardButtons: Dialog.Ok
     }
 }

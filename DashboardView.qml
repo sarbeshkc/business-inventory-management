@@ -28,6 +28,7 @@ Item {
                 model: [
                     {title: "Total Inventory Items", value: userDashboard.totalInventoryItems},
                     {title: "Low Stock Items", value: userDashboard.lowStockItems},
+                    {title: "Expiring Items", value: userDashboard.expiringItems},
                     {title: "Total Sales", value: userDashboard.totalSales},
                     {title: "Total Revenue", value: "$" + userDashboard.totalRevenue.toFixed(2)}
                 ]
@@ -53,7 +54,7 @@ Item {
                             text: modelData.value
                             font.pixelSize: 18
                             font.bold: true
-                            color: "white"
+                            color: modelData.title === "Expiring Items" && modelData.value > 0 ? "#FF9800" : "white"
                         }
                     }
                 }
@@ -87,6 +88,47 @@ Item {
                 }
             }
         }
+    }
+
+    Connections {
+        target: userDashboard
+        function onItemNearExpiry(itemId, itemName, expiryDate) {
+            expiryNotificationDialog.itemName = itemName
+            expiryNotificationDialog.expiryDate = expiryDate
+            expiryNotificationDialog.open()
+        }
+    }
+
+    Dialog {
+        id: expiryNotificationDialog
+        title: "Item Nearing Expiry"
+        modal: true
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+
+        property string itemName: ""
+        property date expiryDate
+
+        contentItem: ColumnLayout {
+            Text {
+                text: "The following item is nearing its expiry date:"
+                color: "white"
+                font.pixelSize: 16
+            }
+            Text {
+                text: expiryNotificationDialog.itemName
+                color: "#FF9800"
+                font.pixelSize: 18
+                font.bold: true
+            }
+            Text {
+                text: "Expiry Date: " + Qt.formatDate(expiryNotificationDialog.expiryDate, "yyyy-MM-dd")
+                color: "white"
+                font.pixelSize: 16
+            }
+        }
+
+        standardButtons: Dialog.Ok
     }
 
     Component.onCompleted: {

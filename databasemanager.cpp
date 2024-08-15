@@ -13,7 +13,7 @@ DatabaseManager::~DatabaseManager() {
 
 bool DatabaseManager::initialize() {
   m_db = QSqlDatabase::addDatabase("QSQLITE");
-  m_db.setDatabaseName("BIMS.db");
+  m_db.setDatabaseName("BIMS3.db");
 
   if (!m_db.open()) {
     emit errorOccurred(
@@ -41,7 +41,7 @@ bool DatabaseManager::createTables() {
     return false;
   }
 
-  // Create Inventory table with supplier information
+  // Create Inventory table with supplier information and expiry date
   if (!query.exec("CREATE TABLE IF NOT EXISTS Inventory ("
                   "id INTEGER PRIMARY KEY AUTOINCREMENT, "
                   "user_id INTEGER NOT NULL, "
@@ -51,6 +51,7 @@ bool DatabaseManager::createTables() {
                   "price REAL NOT NULL, "
                   "supplier_name TEXT, "
                   "supplier_address TEXT, "
+                  "expiry_date DATE, "
                   "last_updated DATETIME DEFAULT CURRENT_TIMESTAMP, "
                   "FOREIGN KEY(user_id) REFERENCES Users(id))")) {
     emit errorOccurred(tr("Failed to create Inventory table: %1")
@@ -58,7 +59,7 @@ bool DatabaseManager::createTables() {
     return false;
   }
 
-  // Create Sales table without supplier information
+  // Create Sales table
   if (!query.exec("CREATE TABLE IF NOT EXISTS Sales ("
                   "id INTEGER PRIMARY KEY AUTOINCREMENT, "
                   "user_id INTEGER NOT NULL, "

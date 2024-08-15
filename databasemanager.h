@@ -7,7 +7,6 @@
 class DatabaseManager : public QObject
 {
     Q_OBJECT
-
 public:
     explicit DatabaseManager(QObject *parent = nullptr);
     ~DatabaseManager();
@@ -19,9 +18,8 @@ signals:
     void errorOccurred(const QString &error);
 
 private:
-    bool createTables();
-
     QSqlDatabase m_db;
+    bool createTables();
 };
 
 #endif // DATABASEMANAGER_H
