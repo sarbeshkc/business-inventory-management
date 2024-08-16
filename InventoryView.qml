@@ -5,6 +5,14 @@ import QtQuick.Layouts 1.15
 Item {
     id: root
 
+    Rectangle {
+        anchors.fill: parent
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: "#1a237e" }
+            GradientStop { position: 1.0; color: "#0d47a1" }
+        }
+    }
+
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: 20
@@ -16,7 +24,7 @@ Item {
 
             Text {
                 text: "Inventory Management"
-                font.pixelSize: 24
+                font.pixelSize: 28
                 font.bold: true
                 color: "white"
             }
@@ -28,11 +36,26 @@ Item {
                 placeholderText: "Search items..."
                 Layout.preferredWidth: 200
                 onTextChanged: inventoryModel.searchItems(text)
+                background: Rectangle {
+                    radius: 5
+                    color: "#ffffff"
+                    opacity: 0.8
+                }
             }
 
             Button {
                 text: "Add Item"
                 onClicked: addItemDialog.open()
+                background: Rectangle {
+                    radius: 5
+                    color: "#4CAF50"
+                }
+                contentItem: Text {
+                    text: parent.text
+                    color: "white"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
             }
         }
 
@@ -45,26 +68,27 @@ Item {
             delegate: Rectangle {
                 width: inventoryListView.width
                 height: 60
-                color: index % 2 === 0 ? "#2c3137" : "#252a31"
+                color: index % 2 === 0 ? "#ffffff" : "#f5f5f5"
+                opacity: 0.9
 
                 RowLayout {
                     anchors.fill: parent
                     anchors.margins: 10
                     spacing: 10
 
-                    Text { text: model.name || ""; color: "white"; font.pixelSize: 16; Layout.fillWidth: true }
-                    Text { text: model.category || ""; color: "#a0a0a0"; font.pixelSize: 14; Layout.preferredWidth: 120 }
-                    Text { text: model.quantity !== undefined ? model.quantity : ""; color: "white"; font.pixelSize: 16; Layout.preferredWidth: 80 }
+                    Text { text: model.name || ""; color: "#333333"; font.pixelSize: 16; Layout.fillWidth: true }
+                    Text { text: model.category || ""; color: "#666666"; font.pixelSize: 14; Layout.preferredWidth: 120 }
+                    Text { text: model.quantity !== undefined ? model.quantity : ""; color: "#333333"; font.pixelSize: 16; Layout.preferredWidth: 80 }
                     Text { text: model.price !== undefined ? "$" + model.price.toFixed(2) : ""; color: "#4CAF50"; font.pixelSize: 16; Layout.preferredWidth: 100 }
-                    Text { text: model.supplierName || ""; color: "#a0a0a0"; font.pixelSize: 14; Layout.preferredWidth: 150 }
+                    Text { text: model.supplierName || ""; color: "#666666"; font.pixelSize: 14; Layout.preferredWidth: 150 }
                     Text { 
                         text: model.expiryDate ? Qt.formatDate(model.expiryDate, "yyyy-MM-dd") : "N/A"
                         color: {
                             if (model.expiryDate) {
                                 var daysUntilExpiry = Math.ceil((model.expiryDate - new Date()) / (1000 * 60 * 60 * 24));
-                                return daysUntilExpiry <= 30 ? "#FF9800" : "#a0a0a0";
+                                return daysUntilExpiry <= 30 ? "#FF9800" : "#666666";
                             }
-                            return "#a0a0a0";
+                            return "#666666";
                         }
                         font.pixelSize: 14
                         Layout.preferredWidth: 100
@@ -83,11 +107,31 @@ Item {
                             editExpiryDateField.text = model.expiryDate ? Qt.formatDate(model.expiryDate, "yyyy-MM-dd") : ""
                             editItemDialog.open()
                         }
+                        background: Rectangle {
+                            radius: 5
+                            color: "#2196F3"
+                        }
+                        contentItem: Text {
+                            text: parent.text
+                            color: "white"
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                        }
                     }
 
                     Button {
                         text: "Delete"
                         onClicked: deleteConfirmationDialog.open()
+                        background: Rectangle {
+                            radius: 5
+                            color: "#F44336"
+                        }
+                        contentItem: Text {
+                            text: parent.text
+                            color: "white"
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                        }
 
                         Dialog {
                             id: deleteConfirmationDialog
@@ -95,9 +139,26 @@ Item {
                             standardButtons: Dialog.Yes | Dialog.No
                             modal: true
 
+                            background: Rectangle {
+                                color: "#ffffff"
+                                radius: 10
+                            }
+
+                            header: Rectangle {
+                                color: "#F44336"
+                                height: 40
+                                width: parent.width
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: deleteConfirmationDialog.title
+                                    color: "white"
+                                    font.bold: true
+                                }
+                            }
+
                             Text {
                                 text: "Are you sure you want to delete this item?"
-                                color: "white"
+                                color: "#333333"
                             }
 
                             onAccepted: {
@@ -119,6 +180,23 @@ Item {
         y: (parent.height - height) / 2
         width: 400
 
+        background: Rectangle {
+            color: "#ffffff"
+            radius: 10
+        }
+
+        header: Rectangle {
+            color: "#4CAF50"
+            height: 40
+            width: parent.width
+            Text {
+                anchors.centerIn: parent
+                text: addItemDialog.title
+                color: "white"
+                font.bold: true
+            }
+        }
+
         contentItem: ColumnLayout {
             spacing: 20
 
@@ -127,21 +205,21 @@ Item {
                 columnSpacing: 10
                 rowSpacing: 10
 
-                Label { text: "Item Name:"; color: "white" }
+                Label { text: "Item Name:"; color: "#333333" }
                 TextField {
                     id: nameField
                     Layout.fillWidth: true
                     placeholderText: "Enter item name"
                 }
 
-                Label { text: "Category:"; color: "white" }
+                Label { text: "Category:"; color: "#333333" }
                 TextField {
                     id: categoryField
                     Layout.fillWidth: true
                     placeholderText: "Enter category"
                 }
 
-                Label { text: "Quantity:"; color: "white" }
+                Label { text: "Quantity:"; color: "#333333" }
                 SpinBox {
                     id: quantityField
                     from: 0
@@ -149,7 +227,7 @@ Item {
                     editable: true
                 }
 
-                Label { text: "Price:"; color: "white" }
+                Label { text: "Price:"; color: "#333333" }
                 TextField {
                     id: priceField
                     Layout.fillWidth: true
@@ -157,21 +235,21 @@ Item {
                     validator: DoubleValidator { bottom: 0; decimals: 2 }
                 }
 
-                Label { text: "Supplier Name:"; color: "white" }
+                Label { text: "Supplier Name:"; color: "#333333" }
                 TextField {
                     id: supplierNameField
                     Layout.fillWidth: true
                     placeholderText: "Enter supplier name"
                 }
 
-                Label { text: "Supplier Address:"; color: "white" }
+                Label { text: "Supplier Address:"; color: "#333333" }
                 TextField {
                     id: supplierAddressField
                     Layout.fillWidth: true
                     placeholderText: "Enter supplier address"
                 }
 
-                Label { text: "Expiry Date:"; color: "white" }
+                Label { text: "Expiry Date:"; color: "#333333" }
                 TextField {
                     id: expiryDateField
                     Layout.fillWidth: true
@@ -187,6 +265,16 @@ Item {
                 Button {
                     text: "Cancel"
                     onClicked: addItemDialog.close()
+                    background: Rectangle {
+                        radius: 5
+                        color: "#F44336"
+                    }
+                    contentItem: Text {
+                        text: parent.text
+                        color: "white"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
                 }
 
                 Button {
@@ -211,6 +299,16 @@ Item {
                         supplierAddressField.text = ""
                         expiryDateField.text = ""
                     }
+                    background: Rectangle {
+                        radius: 5
+                        color: "#4CAF50"
+                    }
+                    contentItem: Text {
+                        text: parent.text
+                        color: "white"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
                 }
             }
         }
@@ -227,6 +325,23 @@ Item {
 
         property int itemId: -1
 
+        background: Rectangle {
+            color: "#ffffff"
+            radius: 10
+        }
+
+        header: Rectangle {
+            color: "#2196F3"
+            height: 40
+            width: parent.width
+            Text {
+                anchors.centerIn: parent
+                text: editItemDialog.title
+                color: "white"
+                font.bold: true
+            }
+        }
+
         contentItem: ColumnLayout {
             spacing: 20
 
@@ -235,19 +350,19 @@ Item {
                 columnSpacing: 10
                 rowSpacing: 10
 
-                Label { text: "Item Name:"; color: "white" }
+                Label { text: "Item Name:"; color: "#333333" }
                 TextField {
                     id: editNameField
                     Layout.fillWidth: true
                 }
 
-                Label { text: "Category:"; color: "white" }
+                Label { text: "Category:"; color: "#333333" }
                 TextField {
                     id: editCategoryField
                     Layout.fillWidth: true
                 }
 
-                Label { text: "Quantity:"; color: "white" }
+                Label { text: "Quantity:"; color: "#333333" }
                 SpinBox {
                     id: editQuantityField
                     from: 0
@@ -255,26 +370,26 @@ Item {
                     editable: true
                 }
 
-                Label { text: "Price:"; color: "white" }
+                Label { text: "Price:"; color: "#333333" }
                 TextField {
                     id: editPriceField
                     Layout.fillWidth: true
                     validator: DoubleValidator { bottom: 0; decimals: 2 }
                 }
 
-                Label { text: "Supplier Name:"; color: "white" }
+                Label { text: "Supplier Name:"; color: "#333333" }
                 TextField {
                     id: editSupplierNameField
                     Layout.fillWidth: true
                 }
 
-                Label { text: "Supplier Address:"; color: "white" }
+                Label { text: "Supplier Address:"; color: "#333333" }
                 TextField {
                     id: editSupplierAddressField
                     Layout.fillWidth: true
                 }
 
-                Label { text: "Expiry Date:"; color: "white" }
+                Label { text: "Expiry Date:"; color: "#333333" }
                 TextField {
                     id: editExpiryDateField
                     Layout.fillWidth: true
@@ -290,6 +405,16 @@ Item {
                 Button {
                     text: "Cancel"
                     onClicked: editItemDialog.close()
+                    background: Rectangle {
+                        radius: 5
+                        color: "#F44336"
+                    }
+                    contentItem: Text {
+                        text: parent.text
+                        color: "white"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
                 }
 
                 Button {
@@ -307,6 +432,16 @@ Item {
                             new Date(editExpiryDateField.text)
                         )
                         editItemDialog.close()
+                    }
+                    background: Rectangle {
+                        radius: 5
+                        color: "#4CAF50"
+                    }
+                    contentItem: Text {
+                        text: parent.text
+                        color: "white"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
                     }
                 }
             }
@@ -333,9 +468,26 @@ Item {
 
         property string errorMessage: ""
 
+        background: Rectangle {
+            color: "#ffffff"
+            radius: 10
+        }
+
+        header: Rectangle {
+            color: "#F44336"
+            height: 40
+            width: parent.width
+            Text {
+                anchors.centerIn: parent
+                text: errorDialog.title
+                color: "white"
+                font.bold: true
+            }
+        }
+
         Label {
             text: errorDialog.errorMessage
-            color: "white"
+            color: "#333333"
             wrapMode: Text.WordWrap
         }
 

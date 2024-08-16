@@ -4,6 +4,14 @@ import QtQuick.Layouts 1.15
 
 Item {
     id: root
+    
+    Rectangle {
+        anchors.fill: parent
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: "#1a237e" }
+            GradientStop { position: 1.0; color: "#0d47a1" }
+        }
+    }
 
     ColumnLayout {
         anchors.fill: parent
@@ -12,49 +20,54 @@ Item {
 
         Text {
             text: "Dashboard"
-            font.pixelSize: 24
+            font.pixelSize: 32
             font.bold: true
-            color: "white"
+            color: "#ffffff"
         }
 
         // Summary Cards
         GridLayout {
             Layout.fillWidth: true
             columns: 2
-            rowSpacing: 10
-            columnSpacing: 10
+            rowSpacing: 15
+            columnSpacing: 15
 
             Repeater {
                 model: [
-                    {title: "Total Inventory Items", value: userDashboard.totalInventoryItems},
-                    {title: "Low Stock Items", value: userDashboard.lowStockItems},
-                    {title: "Expiring Items", value: userDashboard.expiringItems},
-                    {title: "Total Sales", value: userDashboard.totalSales},
-                    {title: "Total Revenue", value: "$" + userDashboard.totalRevenue.toFixed(2)}
+                    {title: "Total Inventory Items", value: userDashboard.totalInventoryItems, color: "#4caf50"},
+                    {title: "Low Stock Items", value: userDashboard.lowStockItems, color: "#ff9800"},
+                    {title: "Expiring Items", value: userDashboard.expiringItems, color: "#f44336"},
+                    {title: "Total Sales", value: userDashboard.totalSales, color: "#2196f3"},
+                    {title: "Total Revenue", value: "$" + userDashboard.totalRevenue.toFixed(2), color: "#9c27b0"}
                 ]
 
                 delegate: Rectangle {
                     Layout.fillWidth: true
-                    height: 80
-                    color: "#2c3137"
-                    radius: 5
+                    height: 100
+                    radius: 10
+                    gradient: Gradient {
+                        GradientStop { position: 0.0; color: Qt.lighter(modelData.color, 1.5) }
+                        GradientStop { position: 1.0; color: modelData.color }
+                    }
+                    border.color: Qt.darker(modelData.color, 1.2)
+                    border.width: 1
 
                     ColumnLayout {
                         anchors.fill: parent
-                        anchors.margins: 10
+                        anchors.margins: 15
                         spacing: 5
 
                         Text {
                             text: modelData.title
-                            font.pixelSize: 14
+                            font.pixelSize: 16
                             color: "white"
                         }
 
                         Text {
                             text: modelData.value
-                            font.pixelSize: 18
+                            font.pixelSize: 24
                             font.bold: true
-                            color: modelData.title === "Expiring Items" && modelData.value > 0 ? "#FF9800" : "white"
+                            color: "white"
                         }
                     }
                 }
@@ -68,8 +81,11 @@ Item {
             Layout.fillHeight: true
 
             background: Rectangle {
-                color: "#2c3137"
-                border.color: "#3a3f48"
+                color: "#ffffff"
+                radius: 10
+                opacity: 0.9
+                border.color: "#e0e0e0"
+                border.width: 1
             }
 
             ListView {
@@ -78,12 +94,20 @@ Item {
                 clip: true
                 delegate: ItemDelegate {
                     width: parent.width
+                    height: 50
                     contentItem: RowLayout {
-                        Text { text: modelData.date.toLocaleString(Qt.locale(), "yyyy-MM-dd hh:mm"); color: "white"; Layout.preferredWidth: 150 }
-                        Text { text: modelData.type; color: "white"; Layout.preferredWidth: 100 }
-                        Text { text: modelData.itemName; color: "white"; Layout.fillWidth: true }
-                        Text { text: modelData.quantity; color: "white"; Layout.preferredWidth: 50 }
-                        Text { text: "$" + modelData.price.toFixed(2); color: "white"; Layout.preferredWidth: 80 }
+                        Text { text: modelData.date.toLocaleString(Qt.locale(), "yyyy-MM-dd hh:mm"); color: "#333333"; Layout.preferredWidth: 150 }
+                        Text { text: modelData.type; color: "#333333"; Layout.preferredWidth: 100 }
+                        Text { text: modelData.itemName; color: "#333333"; Layout.fillWidth: true }
+                        Text { text: modelData.quantity; color: "#333333"; Layout.preferredWidth: 50 }
+                        Text { text: "$" + modelData.price.toFixed(2); color: "#333333"; Layout.preferredWidth: 80 }
+                    }
+
+                    Rectangle {
+                        anchors.bottom: parent.bottom
+                        width: parent.width
+                        height: 1
+                        color: "#e0e0e0"
                     }
                 }
             }
@@ -109,21 +133,42 @@ Item {
         property string itemName: ""
         property date expiryDate
 
+        background: Rectangle {
+            color: "#ffffff"
+            radius: 10
+            border.color: "#e0e0e0"
+            border.width: 1
+        }
+
+        header: Rectangle {
+            color: "#f44336"
+            height: 50
+            radius: 10
+            Text {
+                anchors.centerIn: parent
+                text: expiryNotificationDialog.title
+                color: "white"
+                font.pixelSize: 18
+                font.bold: true
+            }
+        }
+
         contentItem: ColumnLayout {
+            spacing: 10
             Text {
                 text: "The following item is nearing its expiry date:"
-                color: "white"
+                color: "#333333"
                 font.pixelSize: 16
             }
             Text {
                 text: expiryNotificationDialog.itemName
-                color: "#FF9800"
-                font.pixelSize: 18
+                color: "#f44336"
+                font.pixelSize: 20
                 font.bold: true
             }
             Text {
                 text: "Expiry Date: " + Qt.formatDate(expiryNotificationDialog.expiryDate, "yyyy-MM-dd")
-                color: "white"
+                color: "#333333"
                 font.pixelSize: 16
             }
         }

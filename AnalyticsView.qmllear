@@ -1,0 +1,158 @@
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtCharts 2.15
+
+Item {
+    id: root
+
+    QtObject {
+        id: theme
+        property color primaryColor: "#6200EE"
+        property color accentColor: "#03DAC6"
+        property color backgroundColor: "#121212"
+        property color surfaceColor: "#1E1E1E"
+        property color onSurfaceColor: "#FFFFFF"
+        property color cardColor: "#2A2A2A"
+    }
+
+    Rectangle {
+        anchors.fill: parent
+        color: theme.backgroundColor
+    }
+
+    ColumnLayout {
+        anchors.fill: parent
+        anchors.margins: 20
+        spacing: 30
+
+        Text {
+            text: "Analytics Dashboard"
+            font.pixelSize: 32
+            font.weight: Font.Bold
+            color: theme.onSurfaceColor
+        }
+
+        // Summary Cards
+        GridLayout {
+            Layout.fillWidth: true
+            columns: 2
+            rowSpacing: 20
+            columnSpacing: 20
+
+            Repeater {
+                model: [
+                    {title: "Total Revenue", value: "$" + userDashboard.totalRevenue.toFixed(2), icon: "₿"},
+                    {title: "Total Inventory Value", value: "$" + userDashboard.totalInventoryValue.toFixed(2), icon: "📦"},
+                    {title: "Total Sales", value: userDashboard.totalSales, icon: "🛒"},
+                    {title: "Profit Margin", value: userDashboard.profitMargin.toFixed(2) + "%", icon: "📈"}
+                ]
+
+                delegate: Rectangle {
+                    Layout.fillWidth: true
+                    height: 120
+                    color: theme.cardColor
+                    radius: 10
+                    border.color: Qt.rgba(1, 1, 1, 0.1)
+                    border.width: 1
+
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.margins: 20
+                        spacing: 20
+
+                        Rectangle {
+                            width: 60
+                            height: 60
+                            radius: 30
+                            color: theme.primaryColor
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: modelData.icon
+                                font.pixelSize: 24
+                                color: theme.onSurfaceColor
+                            }
+                        }
+
+                        ColumnLayout {
+                            spacing: 5
+
+                            Text {
+                                text: modelData.title
+                                font.pixelSize: 16
+                                color: Qt.rgba(theme.onSurfaceColor.r, theme.onSurfaceColor.g, theme.onSurfaceColor.b, 0.7)
+                            }
+
+                            Text {
+                                text: modelData.value
+                                font.pixelSize: 24
+                                font.weight: Font.Bold
+                                color: theme.onSurfaceColor
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Recent Activities
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            color: theme.surfaceColor
+            radius: 10
+            border.color: Qt.rgba(1, 1, 1, 0.1)
+            border.width: 1
+
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 20
+                spacing: 15
+
+                Text {
+                    text: "Recent Activities"
+                    font.pixelSize: 24
+                    font.weight: Font.Bold
+                    color: theme.onSurfaceColor
+                }
+
+                ListView {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    model: userDashboard.recentActivities
+                    clip: true
+                    spacing: 10
+
+                    delegate: Rectangle {
+                        width: parent.width
+                        height: 60
+                        color: theme.cardColor
+                        radius: 5
+
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.margins: 10
+                            spacing: 15
+
+                            Text { text: Qt.formatDateTime(modelData.date, "yyyy-MM-dd\nhh:mm"); color: Qt.rgba(theme.onSurfaceColor.r, theme.onSurfaceColor.g, theme.onSurfaceColor.b, 0.7); font.pixelSize: 14; Layout.preferredWidth: 100 }
+                            Text { text: modelData.type; color: theme.accentColor; font.pixelSize: 16; font.weight: Font.Medium; Layout.preferredWidth: 100 }
+                            Text { text: modelData.itemName; color: theme.onSurfaceColor; font.pixelSize: 16; Layout.fillWidth: true }
+                            Text { text: modelData.quantity; color: theme.onSurfaceColor; font.pixelSize: 16; Layout.preferredWidth: 50; horizontalAlignment: Text.AlignRight }
+                            Text { text: "$" + modelData.price.toFixed(2); color: theme.accentColor; font.pixelSize: 16; font.weight: Font.Bold; Layout.preferredWidth: 80; horizontalAlignment: Text.AlignRight }
+                        }
+                    }
+
+                    ScrollBar.vertical: ScrollBar {
+                        active: true
+                    }
+                }
+            }
+        }
+    }
+
+    Component.onCompleted: {
+        console.log("AnalyticsView loaded")
+        userDashboard.refresh()
+    }
+}
